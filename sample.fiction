@@ -1,0 +1,78 @@
+fruits:
+	shortDescription: Some red fruits
+	longDescription: Small round red fruits. I hope they are edible.
+	visible: false
+	pickable: true
+
+key:
+	shortDescription: An old key
+	longDescription: A large brass key full of dirt.
+	visible: false
+	pickable: true
+	
+treeMouth:
+	shortDescription: A dark, mouth like cavity.
+	longDescription: A dark, mouth like cavity at the bottom of the tree. It seems to have bits of bones and ashes inside, and between that mess, a brass key.
+	visible: false
+	on look:
+		display longDescription
+		visible: true
+
+tree:
+	shortDescription: evil looking tree
+	longDescription: The trunk looks as if a giant hand had twisted its very fabric in evil delight, its branches a dozen hands reaching out threateningly; or perhaps, desperately. It gives you the creeps. You notice a small cavity near the roots. Perhaps you're imagining too much, but it does look like a mouth.
+	visible: false
+	on look:
+		display longDescription
+		treeMouth.visible: true
+		
+frontYard:
+	shortDescription: the front yard
+	longDescription: The ground is covered with a thick carpet of long dead brown grass, split by a winding pebbled path that leads from the front gate to the house's main door. On one side of the path, an eerie looking tree looms over with a threatening look, its bony fingers trying to reach out. On the other side there are some bushes from which hang ripe red fruits, waiting to be plucked.
+	traversable: true
+	on look:
+		display longDescription
+		tree.visible: true
+		fruits.visible: true
+	=> houseEntry as house | door | main door
+	=> tree as tree
+	=> treeMouth as cavity | tree cavity | mouth | tree mouth
+	=> key as key | brass key
+	=> fruits as fruit | fruits | berries | red fruit | red fruits | red berries
+
+houseEntry:
+	shortDescription: the house's main door entry
+	longDescription: The 2 massive wooden doors are shut, its outward faces inlaid with intricate mirrored drawings of exquisite craft, altough kissed by the unkind passage of time. The are three wooden steps that cry under every footstep, and a small canopy that used to protect from the rain, but now has evidently fed generations of termites.
+	traversable: true
+	=> frontYard as yard | front yard | entrance
+	=> mainHall as inside | house
+	=> door as door | doors | massive door | massive doors
+		
+mainHall:
+	shortDescription: the main hall
+	longDescription: The main hall sports an impressive look. A very tall ceiling. A huge carpeted stairway leads to the top floor. The walls are covered by a combination of boisserie and plum brocatto panels. On the walls on either side hang very large paintings of a man and a woman, respectively. Probably the former owners of the state. On the left side (west) there are 2 hallways; one by the entrance (southwest) and the other by the far side (northwest). On the right (east), there is another hallway and a door.
+	traversable: false
+	=> houseEntry as main door | outside
+		
+library:
+	shortDescription: the library
+	longDescription: The library is as tall as the house and two of its four walls frame a huge window hidden behind a thick curtain, which no doubt played an important part on preserving the countless books that sit on the massive bookshelves. There are thousands of books, several lifespans of reading. The corner of the room where the 2 windowed walls meet is rounded, so it, in fact, is one continuous window that spans the two walls. And along its whole run, a likewise long and curved seat housed confortable readings by the sunlight. An ebony table seats at one side with a lamp and a magnifying glass.
+	traversable: true
+		
+southwestHall:
+	shortDescription: the west hall by the front
+	longDescription: The hall has 2 windows that provide a view to the front yard and plenty of sunlight. At one end of the hall there is an opening that leads to the main hall. On the other side there is a door.
+	traversable: true
+		
+northwestHall:
+	shortDescription: the west hall by the stairs
+	longDescription: The hall has no windows, so the light used to be provided by 2 ceiling lamps. At one end of the hall there is an opening that leads to the main hall. On the other side there is a door. In the middle of one side, there is double door.
+	traversable: true
+
+mainDoor:
+	shortDescription: The main door
+	longDescription: The massive wooden doors are locked shut
+	on open with key:
+		mainHall.traversable: true
+		display You opened the door of the house. The doors open with a deep sound that echo inside.
+
