@@ -1,6 +1,8 @@
 package com.adventure.game;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -10,6 +12,8 @@ import com.adventure.engine.Entity;
 import com.adventure.engine.GameContext;
 import com.adventure.engine.WordNode;
 import com.adventure.engine.parser.Parser;
+import com.adventure.engine.script.GameContextInitializer;
+import com.adventure.engine.script.ScriptParser.ScriptParsingException;
 
 public class Runner {
 
@@ -190,6 +194,22 @@ public class Runner {
 		
 		// Starting location
 		context.setCurrentLocation(frontYard);
+		
+		
+		try {
+			GameContextInitializer initializer = new GameContextInitializer();
+			GameContext context2 = initializer.initialize(new FileInputStream("sample.fiction"));
+			System.out.println(context2.getEntities());
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ScriptParsingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private void mainLoop() {

@@ -1,4 +1,4 @@
-package com.adventure.engine.script;
+package com.adventure.engine.script.grammar;
 
 public class SimpleValue implements Value {
 
@@ -9,6 +9,11 @@ public class SimpleValue implements Value {
 	}
 	
 	public String getValue() {
+		return value;
+	}
+	
+	@Override
+	public String toString() {
 		return value;
 	}
 }

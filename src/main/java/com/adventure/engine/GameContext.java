@@ -1,11 +1,13 @@
 package com.adventure.engine;
 
+import gnu.trove.map.hash.THashMap;
+
 import com.adventure.engine.parser.ParserReceiver;
 
 public class GameContext implements ParserReceiver {
 
-	//List<Entity> inventory = new ArrayList<Entity>();
 	Inventory inventory = new Inventory();
+	THashMap<String, Entity> entityMap = new THashMap<String, Entity>();
 	
 	Entity currentLocation;
 	
@@ -108,6 +110,19 @@ public class GameContext implements ParserReceiver {
 		return  "go".equals(verb) ||
 				"go to".equals(verb) ||
 				"go through".equals(verb);
+	}
+	
+	public void createEntity(String entityId) {
+		entityMap.put(entityId, new Entity());
+	}
+	
+	public Entity getEntity(String entityId) {
+		return entityMap.get(entityId);
+	}
+	
+	@Deprecated
+	public THashMap<String,Entity> getEntities() {
+		return entityMap;
 	}
 
 	public void setCurrentLocation(Entity exit) {

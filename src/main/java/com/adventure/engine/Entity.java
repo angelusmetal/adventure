@@ -134,5 +134,18 @@ public class Entity {
 	public Entity getEntity(String entity) {
 		return entities.get(entity);
 	}
+
+	@Override
+	public String toString() {
+		return "Entity [visible=" + visible + ", name=" + name
+				+ ", shortDescription=" + shortDescription
+				+ ", longDescription=" + longDescription + ", pickable="
+				+ pickable + ", nonPickableDescription="
+				+ nonPickableDescription + ", traversable=" + traversable
+				+ ", nonTraversableDescription=" + nonTraversableDescription
+				+ ", entities=" + entities + "]";
+	}
+	
+	
 	
 }

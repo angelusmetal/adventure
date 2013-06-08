@@ -25,8 +25,14 @@ public class LineAwareBufferedReader extends BufferedReader {
 		}
 	}
 	
+	@Override
+	public boolean ready() throws IOException {
+		return super.ready() || cache != null;
+	}
+	
 	public void putBack(String line) {
 		cache = line;
+		currentLine--;
 	}
 	
 	public int getCurrentLine() {

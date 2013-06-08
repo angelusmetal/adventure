@@ -1,6 +1,5 @@
 package com.adventure.engine.script;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,23 +8,60 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.adventure.engine.script.grammar.CompoundValue;
+import com.adventure.engine.script.grammar.Expression;
+import com.adventure.engine.script.grammar.ListValue;
+import com.adventure.engine.script.grammar.SimpleValue;
+import com.adventure.engine.script.grammar.Value;
+
 public class ScriptParser {
 
 	public List<Expression> parse(final InputStream stream) throws IOException, ScriptParsingException {
+		LineAwareBufferedReader reader = new LineAwareBufferedReader(new InputStreamReader(stream));
+		return parseExpressionList(reader, 0);
+	}
+	
+	List<Expression> parseExpressionList(LineAwareBufferedReader reader, int level) throws ScriptParsingException, IOException {
 		List<Expression> expressions = new ArrayList<Expression>();
 		
-		LineAwareBufferedReader reader = new LineAwareBufferedReader(new InputStreamReader(stream));
-
 		Expression expression = null;
-		while ((expression = parseExpression(reader, 0)) != null) {
-			expressions.add(expression);
+		// TODO Should use reader.ready instead?
+		//while ((expression = parseExpression(reader, level)) != null) {
+		while (reader.ready()) {
+			expression = parseExpression(reader, level);
+			if (expression != null) {
+				expressions.add(expression);
+			} else {
+				break;
+			}
 		}
 		
 		return expressions;
 	}
 
 	Expression parseExpression(LineAwareBufferedReader reader, int level) throws ScriptParsingException, IOException {
-		String line = skipBlankLines(reader);
+		skipBlankLines(reader);
+		
+		String line = reader.readLine();
+		
+		if (line == null) {
+			return null;
+		}
+		
+		// Validate level
+		int actualLevel = 0;
+		for (int i = 0; i < line.length(); i++) {
+			if (line.charAt(i) == '\t') {
+				actualLevel++;
+			}
+		}
+		if (actualLevel < level) {
+			// If line does not conform with expected level, put line back and stop parsing
+			reader.putBack(line);
+			return null;
+		} else if (actualLevel > level) {
+			throw new ScriptParsingException(reader.getCurrentLine(), "Wrong indentation");
+		}
 		
 		String[] tokens = StringUtils.split(line,':');
 		
@@ -35,13 +71,11 @@ public class ScriptParser {
 			throw new ScriptParsingException(reader.getCurrentLine(), "Malformed expression. Too many ':' separators");
 		}
 		
-		String identifier = tokens[0];
+		String identifier = tokens[0].trim();
 		Value value;
 		
 		if (tokens.length == 1) {
-			// Expect value to be in the following lines
-			//Value value = parseCompoundValue(reader, level + 1);
-			value = new SimpleValue(""); // TODO cambiar
+			value = new CompoundValue(parseExpressionList(reader, level + 1));
 		} else {
 			value = parseValue(tokens[1]);
 		}
@@ -58,15 +92,15 @@ public class ScriptParser {
 		}
 	}
 
-	String skipBlankLines(LineAwareBufferedReader reader) throws IOException {
+	void skipBlankLines(LineAwareBufferedReader reader) throws IOException {
 		String line = null;
 		do {
 			line = reader.readLine();
 			if (line == null) {
-				return null;
+				return;
 			}
-		} while (!line.trim().isEmpty());
-		return line;
+		} while (line.trim().isEmpty());
+		reader.putBack(line);
 	}
 	
 	public class ScriptParsingException extends Exception {

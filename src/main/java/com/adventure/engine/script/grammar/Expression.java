@@ -1,4 +1,4 @@
-package com.adventure.engine.script;
+package com.adventure.engine.script.grammar;
 
 public class Expression {
 
@@ -16,5 +16,10 @@ public class Expression {
 	
 	public Value getValue() {
 		return value;
+	}
+	
+	@Override
+	public String toString() {
+		return "[" + identifier + " = " + value.toString() + "]";
 	}
 }
