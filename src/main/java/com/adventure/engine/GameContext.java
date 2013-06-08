@@ -16,18 +16,21 @@ public class GameContext implements ParserReceiver {
 		System.out.print("> ");
 	}
 	
+	@Override
 	public void display(String text) {
 		System.out.println(text);
 	}
 	
+	@Override
 	public void doAction(String verb) {
 		// See if verb has any use in the current context/location
 		currentLocation.signal(this, verb);
 	}
 
+	@Override
 	public void doActionOnObject(String verb, String object) {
 		// Synonyms of current location
-		if ("here".equals(object) || "around".equals(object) || currentLocation.name.equals(object)) {
+		if ("here".equals(object) || "around".equals(object) ||object.equals(currentLocation.getProperty("shortDescription").getAsString())) {
 			doAction(verb);
 			return;
 		}
@@ -49,6 +52,7 @@ public class GameContext implements ParserReceiver {
 		entity.signal(this, verb);
 	}
 
+	@Override
 	public void doActionOnObjectWithModifier(String verb, String object,
 			String modifier) {
 		// Synonyms of current location
@@ -120,9 +124,8 @@ public class GameContext implements ParserReceiver {
 		return entityMap.get(entityId);
 	}
 	
-	@Deprecated
-	public THashMap<String,Entity> getEntities() {
-		return entityMap;
+	public String showContent() {
+		return entityMap.toString();
 	}
 
 	public void setCurrentLocation(Entity exit) {

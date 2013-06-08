@@ -16,12 +16,39 @@ public class ListValue implements Value {
 		}
 	}
 	
-	public List<String> getValues() {
+	@Override
+	public boolean isSimple() {
+		return false;
+	}
+
+	@Override
+	public boolean isList() {
+		return true;
+	}
+
+	@Override
+	public boolean isCompound() {
+		return false;
+	}
+
+	@Override
+	public String getAsString() {
+		return StringUtils.join(values,", ");
+	}
+
+	@Override
+	public List<String> getAsList() {
 		return values;
 	}
-	
+
+	@Override
+	public List<Expression> getNested() {
+		return null;
+	}
+
 	@Override
 	public String toString() {
 		return StringUtils.join(values,", ");
 	}
+
 }

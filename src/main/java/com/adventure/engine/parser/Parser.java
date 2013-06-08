@@ -34,7 +34,7 @@ public class Parser {
 		WordNode verb = verbs.find(tokens);
 		
 		if (verb == null) {
-			System.err.println("Didn't understand: " + sentence);
+			receiver.display("Didn't understand: " + sentence);
 			return;
 		}
 		

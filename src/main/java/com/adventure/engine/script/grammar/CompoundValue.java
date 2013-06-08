@@ -12,7 +12,34 @@ public class CompoundValue implements Value {
 		this.expressions = expressions;
 	}
 	
-	public List<Expression> getExpressions() {
+	@Override
+	public boolean isSimple() {
+		return false;
+	}
+
+	@Override
+	public boolean isList() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isCompound() {
+		return true;
+	}
+
+	@Override
+	public String getAsString() {
+		return null;
+	}
+
+	@Override
+	public List<String> getAsList() {
+		return null;
+	}
+
+	@Override
+	public List<Expression> getNested() {
 		return expressions;
 	}
 	
@@ -20,4 +47,5 @@ public class CompoundValue implements Value {
 	public String toString() {
 		return StringUtils.join(expressions, ", ");
 	}
+
 }

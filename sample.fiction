@@ -1,4 +1,4 @@
-parser:
+main:
 	verbs:
 		pick: pick | pick up | get
 		look: look | look up | examine
@@ -7,7 +7,7 @@ parser:
 		open: open
 	articles: a | the
 	prepositions: with  
-	
+	startingLocation: frontYard
 
 fruits:
 	shortDescription: Some red fruits

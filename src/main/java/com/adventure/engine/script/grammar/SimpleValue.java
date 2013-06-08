@@ -1,5 +1,8 @@
 package com.adventure.engine.script.grammar;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class SimpleValue implements Value {
 
 	final String value;
@@ -8,12 +11,39 @@ public class SimpleValue implements Value {
 		this.value = value;
 	}
 	
-	public String getValue() {
+	@Override
+	public boolean isSimple() {
+		return true;
+	}
+
+	@Override
+	public boolean isList() {
+		return false;
+	}
+
+	@Override
+	public boolean isCompound() {
+		return false;
+	}
+
+	@Override
+	public String getAsString() {
 		return value;
 	}
-	
+
+	@Override
+	public List<String> getAsList() {
+		return Arrays.asList(value);
+	}
+
+	@Override
+	public List<Expression> getNested() {
+		return null;
+	}
+
 	@Override
 	public String toString() {
 		return value;
 	}
+
 }

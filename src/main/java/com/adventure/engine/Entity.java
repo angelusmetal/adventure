@@ -1,5 +1,7 @@
 package com.adventure.engine;
 
+import com.adventure.engine.script.grammar.Value;
+
 import gnu.trove.map.hash.THashMap;
 
 public class Entity {
@@ -16,6 +18,8 @@ public class Entity {
 	protected String nonTraversableDescription = "I can't go there";
 	
 	protected THashMap<String, Entity> entities = new THashMap<String, Entity>();
+	protected THashMap<String, Value> properties = new THashMap<String, Value>();
+	//protected THashMap<Event, EventHandler> eventHandlers = new THashMap<Event, EventHandler>();
 	
 	final public boolean signal(GameContext context, String verb) {
 		if (context.isLookVerb(verb)) {
@@ -43,11 +47,19 @@ public class Entity {
 	public boolean handle(GameContext context, String verb) { return false; }
 	public boolean handle(GameContext context, String verb, Entity modifier)  { return false; }
 	
+	public void setProperty(String property, Value value) {
+		properties.put(property, value);
+	}
+	
+	public Value getProperty(String property) {
+		return properties.get(property);
+	}
+	
 	/*
 	 * Default actions
 	 */
 	protected void look(GameContext context) {
-		context.display(longDescription);
+		context.display(properties.get("longDescription").getAsString());
 	}
 	
 	protected void pick(GameContext context) {
@@ -61,7 +73,7 @@ public class Entity {
 	protected void go(GameContext context) {
 		if (traversable) {
 			context.setCurrentLocation(this);
-			context.display("Went to " + this.shortDescription);
+			context.display("Went to " + properties.get("shortDescription").getAsString());
 		} else {
 			context.display(nonTraversableDescription);
 		}
@@ -143,9 +155,7 @@ public class Entity {
 				+ pickable + ", nonPickableDescription="
 				+ nonPickableDescription + ", traversable=" + traversable
 				+ ", nonTraversableDescription=" + nonTraversableDescription
-				+ ", entities=" + entities + "]";
+				+ ", entities=" + entities.keySet() + ", properties=" + properties + "]";
 	}
-	
-	
-	
+
 }
