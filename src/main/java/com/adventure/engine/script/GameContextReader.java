@@ -12,7 +12,15 @@ import com.adventure.engine.script.grammar.Value;
 
 public class GameContextReader {
 
-	public GameContext initialize(InputStream stream) throws IOException, ScriptParsingException, GameContextReaderException {
+	/**
+	 * Read an {@link InputStream} and create a {@link GameContext} from that.
+	 * @param stream
+	 * @return
+	 * @throws IOException
+	 * @throws ScriptParsingException
+	 * @throws GameContextReaderException
+	 */
+	public GameContext readFrom(InputStream stream) throws IOException, ScriptParsingException, GameContextReaderException {
 		GameContext context = new GameContext();
 		
 		ScriptParser parser = new ScriptParser();

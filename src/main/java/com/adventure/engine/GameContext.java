@@ -54,7 +54,7 @@ public class GameContext implements ParserReceiver {
 
 	@Override
 	public void doActionOnObjectWithModifier(String verb, String object,
-			String modifier) {
+			String preposition, String modifier) {
 		// Synonyms of current location
 		if ("here".equals(object) || "around".equals(object) || currentLocation.name.equals(object)) {
 			doAction(verb);

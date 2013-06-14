@@ -18,14 +18,17 @@ public class ParserTest {
 
 	Parser parser = new Parser();
 	@Mock ParserReceiver context;
-	WordNode verbs = WordNode.newRoot();
+	@Mock Verbs verbs;
+	WordNode verbTree = WordNode.newRoot();
 	List<String> articles = new ArrayList<String>();
 	List<String> prepositions = new ArrayList<String>();
 	
 	@Before public void setUp() {
 		initMocks(this);
 		
-		verbs.addWords("pick up");
+		when(verbs.getTree()).thenReturn(verbTree);
+		
+		verbTree.addWords("pick up");
 		articles.add("the");
 		prepositions.add("with");
 		
@@ -66,6 +69,11 @@ public class ParserTest {
 	
 	@Test public void testCompoundVerbArticleObjectWithModifier() {
 		parser.parse("pick up the coal with gloves", context);
-		verify(context).doActionOnObjectWithModifier("pick up", "coal", "gloves");
+		verify(context).doActionOnObjectWithModifier("pick up", "coal", "with", "gloves");
+	}
+	
+	@Test public void testCompoundVerbArticleObjectWithModifierUnknownPreposition() {
+		parser.parse("pick up the coal under gloves", context);
+		verify(context, never()).doActionOnObjectWithModifier(anyString(), anyString(), anyString(), anyString());
 	}
 }

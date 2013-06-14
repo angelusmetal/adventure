@@ -10,11 +10,11 @@ import com.adventure.engine.WordNode;
 
 public class Parser {
 
-	WordNode verbs;
+	Verbs verbs;
 	List<String> articles = Collections.emptyList();
 	List<String> prepositions = Collections.emptyList();
 	
-	public void setVerbs(WordNode verbs) {
+	public void setVerbs(Verbs verbs) {
 		this.verbs = verbs;
 	}
 	
@@ -31,7 +31,7 @@ public class Parser {
 		String[] tokens = StringUtils.split(sentence);
 		
 		// Lookup verb
-		WordNode verb = verbs.find(tokens);
+		WordNode verb = verbs.getTree().find(tokens);
 		
 		if (verb == null) {
 			receiver.display("Didn't understand: " + sentence);
@@ -50,12 +50,12 @@ public class Parser {
 			}
 			
 			// Add the remaining tokens until a preposition is found 
-//			String preposition = null;
+			String preposition = null;
 			for (i++; i < tokens.length; ++i) {
 				token = tokens[i];
 				// Preposition found
 				if (prepositions.contains(token)) {
-//					preposition = token;
+					preposition = token;
 					i++;
 					break;
 				}
@@ -69,7 +69,7 @@ public class Parser {
 				for (; i < tokens.length; ++i) {
 					modifier += " " + tokens[i];
 				}
-				receiver.doActionOnObjectWithModifier(verb.toString(), StringUtils.join(subject, ' '), modifier);
+				receiver.doActionOnObjectWithModifier(verb.toString(), StringUtils.join(subject, ' '), preposition, modifier);
 			} else {
 				receiver.doActionOnObject(verb.toString(), StringUtils.join(subject, ' '));
 			}
@@ -77,4 +77,5 @@ public class Parser {
 			receiver.doAction(verb.toString());
 		}
 	}
+
 }

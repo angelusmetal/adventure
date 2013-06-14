@@ -43,6 +43,7 @@ public class ScriptParser {
 		skipBlankLines(reader);
 		
 		String line = reader.readLine();
+		int currentLine = reader.getCurrentLine();
 		
 		if (line == null) {
 			return null;
@@ -60,15 +61,15 @@ public class ScriptParser {
 			reader.putBack(line);
 			return null;
 		} else if (actualLevel > level) {
-			throw new ScriptParsingException(reader.getCurrentLine(), "Wrong indentation");
+			throw new ScriptParsingException(currentLine, "Wrong indentation");
 		}
 		
 		String[] tokens = StringUtils.split(line,':');
 		
 		if (tokens.length == 0) {
-			throw new ScriptParsingException(reader.getCurrentLine(), "Expected identifier");
+			throw new ScriptParsingException(currentLine, "Expected identifier");
 		} else if (tokens.length > 2) {
-			throw new ScriptParsingException(reader.getCurrentLine(), "Malformed expression. Too many ':' separators");
+			throw new ScriptParsingException(currentLine, "Malformed expression. Too many ':' separators");
 		}
 		
 		String identifier = tokens[0].trim();
@@ -80,7 +81,7 @@ public class ScriptParser {
 			value = parseValue(tokens[1]);
 		}
 		
-		return new Expression(identifier, value);
+		return new Expression(identifier, value, currentLine);
 	}
 	
 	Value parseValue(String simpleValue) {

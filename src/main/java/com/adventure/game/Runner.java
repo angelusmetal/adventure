@@ -14,7 +14,10 @@ import com.adventure.engine.Entity;
 import com.adventure.engine.GameContext;
 import com.adventure.engine.WordNode;
 import com.adventure.engine.parser.Parser;
+import com.adventure.engine.parser.Verbs;
+import com.adventure.engine.parser.Verbs.VerbsException;
 import com.adventure.engine.script.GameContextReader;
+import com.adventure.engine.script.ScriptParser;
 import com.adventure.engine.script.GameContextReader.GameContextReaderException;
 import com.adventure.engine.script.ScriptParser.ScriptParsingException;
 import com.adventure.engine.script.grammar.Expression;
@@ -22,9 +25,7 @@ import com.adventure.engine.script.grammar.Expression;
 public class Runner {
 
 	Parser parser = new Parser();
-	WordNode verbs = WordNode.newRoot();
-	THashMap<String, List<String>> verbGroups = new THashMap<String,List<String>>();
-	THashMap<String, String> verbToGroup = new THashMap<String, String>();
+	Verbs verbs = new Verbs();
 	List<String> articles;
 	List<String> prepositions;
 	GameContext context = new GameContext();
@@ -40,23 +41,23 @@ public class Runner {
 	
 	public Runner() {
 		readScript();
-		initParser();
+		try {
+			initParser();
+		} catch (VerbsException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 	
-	private void initParser() {
+	private void initParser() throws VerbsException {
 		// Configure verbs
 		parser.setVerbs(verbs);
 		List<Expression> verbExpressions = main.getProperty("verbs").getNested();
 		for (Expression expression : verbExpressions) {
-			List<String> verbList = expression.getValue().getAsList();
-			List<String> verbsInGroup = new ArrayList<String>();
-			for (String verb : verbList) {
-				verbs.addWords(verb); // add verb to verb tree
-				verbsInGroup.add(verb); // add verb to current group
-				verbToGroup.put(verb, expression.getIdentifier()); // map verb to its group name 
+			if (expression.getValue().isCompound()) {
+//				throw new Exception("Verb group definitions cannot be compound expressions");
 			}
-			// Register verb group
-			verbGroups.put(expression.getIdentifier(), verbsInGroup);
+			verbs.addVerbGroup(expression.getIdentifier(), expression.getValue().getAsList());
 		}
 		
 		// Configure articles
@@ -72,7 +73,7 @@ public class Runner {
 	private void readScript() {
 		try {
 			GameContextReader reader = new GameContextReader();
-			context = reader.initialize(new FileInputStream("sample.fiction"));
+			context = reader.readFrom(new FileInputStream("sample.fiction"));
 			
 			main = context.getEntity("main");
 			
