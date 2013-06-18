@@ -1,4 +1,4 @@
-package com.adventure.engine.parser;
+package com.adventure.engine.console;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,11 +10,11 @@ import com.adventure.engine.WordNode;
 
 public class Parser {
 
-	Verbs verbs;
+	Vocabulary verbs;
 	List<String> articles = Collections.emptyList();
 	List<String> prepositions = Collections.emptyList();
 	
-	public void setVerbs(Verbs verbs) {
+	public void setVocabulary(Vocabulary verbs) {
 		this.verbs = verbs;
 	}
 	
@@ -28,10 +28,10 @@ public class Parser {
 	
 	public void parse(String sentence, ParserReceiver receiver) {
 		// Tokenize
-		String[] tokens = StringUtils.split(sentence);
+		String[] tokens = StringUtils.split(sentence.toLowerCase());
 		
 		// Lookup verb
-		WordNode verb = verbs.getTree().find(tokens);
+		WordNode verb = verbs.getVerbTree().find(tokens);
 		
 		if (verb == null) {
 			receiver.display("Didn't understand: " + sentence);

@@ -1,4 +1,4 @@
-package com.adventure.engine.script;
+package com.adventure.engine.script.syntax;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -14,17 +14,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import com.adventure.engine.script.ScriptParser.ScriptParsingException;
-import com.adventure.engine.script.grammar.CompoundValue;
-import com.adventure.engine.script.grammar.Expression;
-import com.adventure.engine.script.grammar.ListValue;
-import com.adventure.engine.script.grammar.SimpleValue;
-import com.adventure.engine.script.grammar.Value;
+import com.adventure.engine.script.LineAwareBufferedReader;
+import com.adventure.engine.script.syntax.Expression;
+import com.adventure.engine.script.syntax.SyntaxParser;
+import com.adventure.engine.script.syntax.Value;
+import com.adventure.engine.script.syntax.SyntaxParser.ScriptParsingException;
 
-public class ScriptParserTest {
+public class SyntaxParserTest {
 
 	
-	ScriptParser parser = new ScriptParser();
+	SyntaxParser parser = new SyntaxParser();
 	@Mock LineAwareBufferedReader reader;
 	
 	@Before public void setUp() {

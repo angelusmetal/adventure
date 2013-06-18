@@ -8,8 +8,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import com.adventure.engine.WordNode;
-import com.adventure.engine.parser.Parser;
-import com.adventure.engine.parser.ParserReceiver;
+import com.adventure.engine.console.Parser;
+import com.adventure.engine.console.ParserReceiver;
+import com.adventure.engine.console.Vocabulary;
 
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.mockito.Mockito.*;
@@ -18,7 +19,7 @@ public class ParserTest {
 
 	Parser parser = new Parser();
 	@Mock ParserReceiver context;
-	@Mock Verbs verbs;
+	@Mock Vocabulary verbs;
 	WordNode verbTree = WordNode.newRoot();
 	List<String> articles = new ArrayList<String>();
 	List<String> prepositions = new ArrayList<String>();
@@ -26,13 +27,13 @@ public class ParserTest {
 	@Before public void setUp() {
 		initMocks(this);
 		
-		when(verbs.getTree()).thenReturn(verbTree);
+		when(verbs.getVerbTree()).thenReturn(verbTree);
 		
 		verbTree.addWords("pick up");
 		articles.add("the");
 		prepositions.add("with");
 		
-		parser.setVerbs(verbs);
+		parser.setVocabulary(verbs);
 		parser.setArticles(articles);
 		parser.setPrepositions(prepositions);
 	}

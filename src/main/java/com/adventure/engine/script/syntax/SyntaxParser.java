@@ -1,4 +1,4 @@
-package com.adventure.engine.script;
+package com.adventure.engine.script.syntax;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,27 +8,21 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.adventure.engine.script.grammar.CompoundValue;
-import com.adventure.engine.script.grammar.Expression;
-import com.adventure.engine.script.grammar.ListValue;
-import com.adventure.engine.script.grammar.SimpleValue;
-import com.adventure.engine.script.grammar.Value;
+import com.adventure.engine.script.LineAwareBufferedReader;
 
-public class ScriptParser {
+public class SyntaxParser {
 
 	public List<Expression> parse(final InputStream stream) throws IOException, ScriptParsingException {
 		LineAwareBufferedReader reader = new LineAwareBufferedReader(new InputStreamReader(stream));
 		return parseExpressionList(reader, 0);
 	}
 	
-	List<Expression> parseExpressionList(LineAwareBufferedReader reader, int level) throws ScriptParsingException, IOException {
+	List<Expression> parseExpressionList(LineAwareBufferedReader reader, int expectedLevel) throws ScriptParsingException, IOException {
 		List<Expression> expressions = new ArrayList<Expression>();
 		
 		Expression expression = null;
-		// TODO Should use reader.ready instead?
-		//while ((expression = parseExpression(reader, level)) != null) {
 		while (reader.ready()) {
-			expression = parseExpression(reader, level);
+			expression = parseExpression(reader, expectedLevel);
 			if (expression != null) {
 				expressions.add(expression);
 			} else {
@@ -39,7 +33,7 @@ public class ScriptParser {
 		return expressions;
 	}
 
-	Expression parseExpression(LineAwareBufferedReader reader, int level) throws ScriptParsingException, IOException {
+	Expression parseExpression(LineAwareBufferedReader reader, int expectedLevel) throws ScriptParsingException, IOException {
 		skipBlankLines(reader);
 		
 		String line = reader.readLine();
@@ -48,23 +42,27 @@ public class ScriptParser {
 		if (line == null) {
 			return null;
 		}
-		
-		// Validate level
+
+		// Find indentation level
 		int actualLevel = 0;
 		for (int i = 0; i < line.length(); i++) {
 			if (line.charAt(i) == '\t') {
 				actualLevel++;
+			} else {
+				break;
 			}
 		}
-		if (actualLevel < level) {
+		
+		// Check level
+		if (actualLevel < expectedLevel) {
 			// If line does not conform with expected level, put line back and stop parsing
 			reader.putBack(line);
 			return null;
-		} else if (actualLevel > level) {
+		} else if (actualLevel > expectedLevel) {
 			throw new ScriptParsingException(currentLine, "Wrong indentation");
 		}
 		
-		String[] tokens = StringUtils.split(line,':');
+		String[] tokens = StringUtils.split(line.trim(),':');
 		
 		if (tokens.length == 0) {
 			throw new ScriptParsingException(currentLine, "Expected identifier");
@@ -76,7 +74,7 @@ public class ScriptParser {
 		Value value;
 		
 		if (tokens.length == 1) {
-			value = new CompoundValue(parseExpressionList(reader, level + 1));
+			value = new CompoundValue(parseExpressionList(reader, expectedLevel + 1));
 		} else {
 			value = parseValue(tokens[1]);
 		}

@@ -1,4 +1,4 @@
-package com.adventure.engine.parser;
+package com.adventure.engine.console;
 
 public interface ParserReceiver {
 	void doAction(String verb);

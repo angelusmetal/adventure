@@ -1,6 +1,8 @@
 package com.adventure.engine;
 
-import com.adventure.engine.script.grammar.Value;
+import com.adventure.engine.console.Vocabulary;
+import com.adventure.engine.script.syntax.Expression;
+import com.adventure.engine.script.syntax.Value;
 
 import gnu.trove.map.hash.THashMap;
 
@@ -18,15 +20,17 @@ public class Entity {
 	protected String nonTraversableDescription = "I can't go there";
 	
 	protected THashMap<String, Entity> entities = new THashMap<String, Entity>();
-	protected THashMap<String, Value> properties = new THashMap<String, Value>();
+	protected THashMap<String, Expression> properties = new THashMap<String, Expression>();
 	//protected THashMap<Event, EventHandler> eventHandlers = new THashMap<Event, EventHandler>();
 	
 	final public boolean signal(GameContext context, String verb) {
-		if (context.isLookVerb(verb)) {
+		Vocabulary vocabulary = context.getVocabulary();
+		String group = vocabulary.getVerbGroup(verb);
+		if ("look".equals(group)) {
 			look(context);
-		} else if (context.isPickupVerb(verb)) {
+		} else if ("pick".equals(group)) {
 			pick(context);
-		} else if (context.isGoVerb(verb)) {
+		} else if ("go".equals(group)) {
 			go(context);
 		} else {
 			// Handle non-standard actions
@@ -47,11 +51,11 @@ public class Entity {
 	public boolean handle(GameContext context, String verb) { return false; }
 	public boolean handle(GameContext context, String verb, Entity modifier)  { return false; }
 	
-	public void setProperty(String property, Value value) {
+	public void setProperty(String property, Expression value) {
 		properties.put(property, value);
 	}
 	
-	public Value getProperty(String property) {
+	public Expression getProperty(String property) {
 		return properties.get(property);
 	}
 	
@@ -59,7 +63,7 @@ public class Entity {
 	 * Default actions
 	 */
 	protected void look(GameContext context) {
-		context.display(properties.get("longDescription").getAsString());
+		context.display(properties.get("longDescription").getValue().getAsString());
 	}
 	
 	protected void pick(GameContext context) {
@@ -73,7 +77,7 @@ public class Entity {
 	protected void go(GameContext context) {
 		if (traversable) {
 			context.setCurrentLocation(this);
-			context.display("Went to " + properties.get("shortDescription").getAsString());
+			context.display("Went to " + properties.get("shortDescription").getValue().getAsString());
 		} else {
 			context.display(nonTraversableDescription);
 		}

@@ -1,4 +1,4 @@
-package com.adventure.engine.script.grammar;
+package com.adventure.engine.script.syntax;
 
 import java.util.List;
 

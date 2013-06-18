@@ -2,14 +2,17 @@ package com.adventure.engine;
 
 import gnu.trove.map.hash.THashMap;
 
-import com.adventure.engine.parser.ParserReceiver;
+import com.adventure.engine.console.ParserReceiver;
+import com.adventure.engine.console.Vocabulary;
 
 public class GameContext implements ParserReceiver {
 
-	Inventory inventory = new Inventory();
-	THashMap<String, Entity> entityMap = new THashMap<String, Entity>();
+	THashMap<String, Entity> entityDictionary = new THashMap<String, Entity>();
+	Vocabulary vocabulary;
 	
+	Inventory inventory = new Inventory();
 	Entity currentLocation;
+	
 	
 	public void displayPrompt() {
 		//System.out.println("[" + currentLocation.shortDescription + "]");
@@ -30,7 +33,7 @@ public class GameContext implements ParserReceiver {
 	@Override
 	public void doActionOnObject(String verb, String object) {
 		// Synonyms of current location
-		if ("here".equals(object) || "around".equals(object) ||object.equals(currentLocation.getProperty("shortDescription").getAsString())) {
+		if ("here".equals(object) || "around".equals(object) ||object.equals(currentLocation.getProperty("shortDescription").getValue().getAsString())) {
 			doAction(verb);
 			return;
 		}
@@ -93,43 +96,42 @@ public class GameContext implements ParserReceiver {
 		inventory.addEntity(entity);
 	}
 
-	public boolean isLookVerb(String verb) {
-		return  "look".equals(verb) ||
-				"look at".equals(verb) ||
-				"see".equals(verb) ||
-				"examine".equals(verb);
-	}
-	
-	public boolean isExamineVerb(String verb) {
-		return "examine".equals(verb);
-	}
-	
-	public boolean isPickupVerb(String verb) {
-		return  "pick".equals(verb) ||
-				"pick up".equals(verb) ||
-				"grab".equals(verb);
-	}
-	
-	public boolean isGoVerb(String verb) {
-		return  "go".equals(verb) ||
-				"go to".equals(verb) ||
-				"go through".equals(verb);
-	}
-	
 	public void createEntity(String entityId) {
-		entityMap.put(entityId, new Entity());
+		entityDictionary.put(entityId, new Entity());
 	}
 	
 	public Entity getEntity(String entityId) {
-		return entityMap.get(entityId);
+		return entityDictionary.get(entityId);
+	}
+	
+	public Entity getOrCreateEntity(String entityId) {
+		if (entityDictionary.containsKey(entityId)) {
+			return entityDictionary.get(entityId);
+		} else {
+			Entity entity = new Entity();
+			entityDictionary.put(entityId, entity);
+			return entity;
+		}
 	}
 	
 	public String showContent() {
-		return entityMap.toString();
+		return entityDictionary.toString();
 	}
 
 	public void setCurrentLocation(Entity exit) {
 		currentLocation = exit;
 	}
 	
+	public void setEntityDictionary(THashMap<String, Entity> entityDictionary) {
+		this.entityDictionary = entityDictionary;
+	}
+
+	public Vocabulary getVocabulary() {
+		return vocabulary;
+	}
+
+	public void setVocabulary(Vocabulary vocabulary) {
+		this.vocabulary = vocabulary;
+	}
+
 }

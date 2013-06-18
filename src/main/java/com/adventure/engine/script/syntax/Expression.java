@@ -1,4 +1,4 @@
-package com.adventure.engine.script.grammar;
+package com.adventure.engine.script.syntax;
 
 public class Expression {
 
@@ -20,7 +20,7 @@ public class Expression {
 		return value;
 	}
 	
-	public int getLineNumbe() {
+	public int getLineNumber() {
 		return lineNumber;
 	}
 	
