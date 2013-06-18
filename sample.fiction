@@ -1,15 +1,16 @@
-vocabulary:
+@vocabulary:
 	verbs:
-		pick: pick | pick up | get
-		look: look | look at| look up | examine | observe
-		go: go | go to | walk | walk to
-		use: use
-		open: open
+		@pick: pick | pick up | get
+		@look: look | look at | look up | examine | observe
+		@go: go | go to | walk | walk to
+		@use: use
+		@open: open
 	articles: a | the
 	prepositions: with
 
-main:  
-	startingLocation: frontYard
+@start:  
+	location: frontYard
+	welcome: You are somewhere cold
 
 fruits:
 	shortDescription: Some red fruits

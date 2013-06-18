@@ -27,7 +27,7 @@ public class GameContextParser extends ExpressionParser<GameContext> {
 		for (Expression exp : nested) {
 			String identifier = exp.getIdentifier();
 			
-			if ("vocabulary".equals(identifier)) {
+			if ("@vocabulary".equals(identifier)) {
 				context.setVocabulary(vocabularyParser.parse(exp));
 			} else {
 				entityParser.parse(exp);

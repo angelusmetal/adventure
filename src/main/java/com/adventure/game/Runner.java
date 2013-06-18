@@ -23,7 +23,7 @@ public class Runner {
 	List<String> articles;
 	List<String> prepositions;
 	GameContext context = new GameContext();
-	Entity main;
+	Entity start;
 	
 	/**
 	 * @param args
@@ -45,22 +45,22 @@ public class Runner {
 	
 	private void initParser() throws ExpressionParserException {
 		
-//		// Get verbs from the main object
+//		// Get verbs from the start object
 //		VocabularyParser verbsParser = new VocabularyParser();
 //		Entity voc = context.getEntity("vocabulary");
 //		
 //		// Parse them
-//		Vocabulary verbs = verbsParser.parse(main.getProperty("verbs"));
+//		Vocabulary verbs = verbsParser.parse(start.getProperty("verbs"));
 		
 		// Make the interested parties aware of them
 		parser.setVocabulary(context.getVocabulary());
 		
 //		// Configure articles
-//		List<String> articles = main.getProperty("articles").getValue().getAsList();
+//		List<String> articles = start.getProperty("articles").getValue().getAsList();
 //		parser.setArticles(articles);
 //		
 //		// Configure prepositions
-//		List<String> prepositions = main.getProperty("prepositions").getValue().getAsList();
+//		List<String> prepositions = start.getProperty("prepositions").getValue().getAsList();
 //		parser.setPrepositions(prepositions);
 //
 	}
@@ -70,12 +70,15 @@ public class Runner {
 			GameContextReader reader = new GameContextReader();
 			context = reader.readFrom(new FileInputStream("sample.fiction"));
 			
-			main = context.getEntity("main");
+			start = context.getEntity("@start");
 			
 			// Set starting location
-			String startingLocation = main.getProperty("startingLocation").getValue().getAsString();
+			String startingLocation = start.getProperty("location").getValue().getAsString();
 			context.setCurrentLocation(context.getEntity(startingLocation));
 
+			String welcome = start.getProperty("welcome").getValue().getAsString();
+			context.display(welcome);
+			
 //			System.out.println(context.showContent());
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -90,7 +93,6 @@ public class Runner {
 	}
 	
 	private void mainLoop() {
-		context.display("Adventure :)");
 		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
 		String sentence;
 		try {
