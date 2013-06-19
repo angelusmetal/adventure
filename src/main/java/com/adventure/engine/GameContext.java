@@ -93,7 +93,7 @@ public class GameContext implements ParserReceiver {
 		// Inventory
 		if ("inventory".equals(object)) {
 			try {
-				inventory.signal(this, verb, modifierEntity);
+				inventory.signal(this, verb, preposition, modifierEntity);
 			} catch (EntityHandlingException e) {
 				e.printStackTrace();
 				System.exit(1);
@@ -110,7 +110,7 @@ public class GameContext implements ParserReceiver {
 		
 		// Send signal (verb + modifier) to the object
 		try {
-			entity.signal(this, verb, modifierEntity);
+			entity.signal(this, verb, preposition, modifierEntity);
 		} catch (EntityHandlingException e) {
 			e.printStackTrace();
 			System.exit(1);

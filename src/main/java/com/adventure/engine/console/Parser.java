@@ -1,7 +1,6 @@
 package com.adventure.engine.console;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,20 +9,10 @@ import com.adventure.engine.WordNode;
 
 public class Parser {
 
-	Vocabulary verbs;
-	List<String> articles = Collections.emptyList();
-	List<String> prepositions = Collections.emptyList();
+	Vocabulary vocabulary;
 	
-	public void setVocabulary(Vocabulary verbs) {
-		this.verbs = verbs;
-	}
-	
-	public void setArticles(List<String> articles) {
-		this.articles = articles;
-	}
-	
-	public void setPrepositions(List<String> prepositions) {
-		this.prepositions = prepositions;
+	public void setVocabulary(Vocabulary vocabulary) {
+		this.vocabulary = vocabulary;
 	}
 	
 	public void parse(String sentence, ParserReceiver receiver) {
@@ -31,7 +20,7 @@ public class Parser {
 		String[] tokens = StringUtils.split(sentence.toLowerCase());
 		
 		// Lookup verb
-		WordNode verb = verbs.getVerbTree().find(tokens);
+		WordNode verb = vocabulary.getVerbTree().find(tokens);
 		
 		if (verb == null) {
 			receiver.display("Didn't understand: " + sentence);
@@ -45,7 +34,7 @@ public class Parser {
 			
 			// Add first token, only if it's not an article
 			String token = tokens[i];
-			if (!articles.contains(token)) {
+			if (!vocabulary.getArticles().contains(token)) {
 				subject.add(token);
 			}
 			
@@ -54,7 +43,7 @@ public class Parser {
 			for (i++; i < tokens.length; ++i) {
 				token = tokens[i];
 				// Preposition found
-				if (prepositions.contains(token)) {
+				if (vocabulary.getPrepositions().contains(token)) {
 					preposition = token;
 					i++;
 					break;

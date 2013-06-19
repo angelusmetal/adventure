@@ -78,15 +78,49 @@ public class Entity {
 		return true;
 	}
 	
-	final public boolean signal(GameContext context, String verb, Entity modifier) throws EntityHandlingException {
+	final public boolean signal(GameContext context, String verb, String preposition, Entity modifier) throws EntityHandlingException {
 		
-		// TODO Handler lookup code here too
-		// Handle non-standard actions
-		boolean result = handle(context, verb, modifier);
-		if (result == false) {
-			context.display("I can't do that");
+		Vocabulary vocabulary = context.getVocabulary();
+		String group = vocabulary.getVerbGroup(verb);
+		
+		// Look up handler code. First try to get code that handles the
+		// specific verb. If not, try to get code that handles the verb group.
+		// And finally, if not, use the default handling code.
+		
+		String verbHandler = "on " + verb + " " + preposition + " " + modifier.getName();
+		String groupHandler = "on " + group + " " + preposition + " " + modifier.getName();
+		Expression code = null;
+		
+		// verb handler
+		if (properties.containsKey(verbHandler)) {
+			code = properties.get(verbHandler);
 		}
-		return result;
+		// group handler
+		else if (properties.containsKey(groupHandler)) {
+			code = properties.get(groupHandler);
+		}
+		// if a specific handler was found, evaluate the handler code
+		if (code != null) {
+			List<Expression> nested = code.getValue().getNested();
+			for (Expression exp : nested) {
+				try {
+					// TODO Move this code to its own place
+					if ("display".equals(exp.getIdentifier())) {
+						context.display(exp.getValue().getAsString()); // TODO Missing replacement of @annotated expressions
+					} else {
+						// For now, only property assignments
+						Entity entity = propertyEvaluator.getEntity(exp.getIdentifier(), this, context);
+						String property = propertyEvaluator.getProperty(exp.getIdentifier());
+						entity.setProperty(property, exp);
+					}
+				} catch (EvaluationException e) {
+					throw new EntityHandlingException(e);
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public boolean handle(GameContext context, String verb) { return false; }

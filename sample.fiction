@@ -29,15 +29,13 @@ treeMouth:
 	longDescription: A dark, mouth like cavity at the bottom of the tree. It seems to have bits of bones and ashes inside, and between that mess, a brass key.
 	visible: false
 	on @look:
-		#display: longDescription
-		visible: true
+		key.visible: true
 
 tree:
 	shortDescription: evil looking tree
 	longDescription: The trunk looks as if a giant hand had twisted its very fabric in evil delight, its branches a dozen hands reaching out threateningly; or perhaps, desperately. It gives you the creeps. You notice a small cavity near the roots. Perhaps you're imagining too much, but it does look like a mouth.
 	visible: false
 	on @look:
-		#display longDescription
 		treeMouth.visible: true
 		
 frontYard:
@@ -61,7 +59,7 @@ houseEntry:
 	connections:
 		frontYard: yard | front yard | entrance
 		mainHall: inside | house
-		door: door | doors | massive door | massive doors
+		mainDoor: door | doors | massive door | massive doors
 		
 mainHall:
 	shortDescription: the main hall
@@ -90,5 +88,5 @@ mainDoor:
 	longDescription: The massive wooden doors are locked shut
 	on @open with key:
 		mainHall.traversable: true
-		display You opened the door of the house. The doors open with a deep sound that echo inside.
+		display: You opened the door of the house. The doors open with a deep sound that echo inside.
 

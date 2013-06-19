@@ -7,7 +7,7 @@ import com.adventure.engine.console.Vocabulary.VocabularyException;
 import com.adventure.engine.script.syntax.Expression;
 
 /**
- * Takes care of parsing a verbs expression to populate a {@link Vocabulary} object.
+ * Takes care of parsing a vocabulary expression to populate a {@link Vocabulary} object.
  * 
  * @author Rodrigo Fernández (angelusmetal@gmail.com)
  *
@@ -39,7 +39,7 @@ public class VocabularyParser extends ExpressionParser<Vocabulary> {
 	}
 	
 	void parseVerbs(Vocabulary vocabulary, Expression expression) throws ExpressionParserException {
-		// verbs definition must be compound
+		// vocabulary definition must be compound
 		List<Expression> nested = getNested(expression);
 		
 		for (Expression exp : nested) {

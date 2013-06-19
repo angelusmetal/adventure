@@ -19,7 +19,7 @@ public class ParserTest {
 
 	Parser parser = new Parser();
 	@Mock ParserReceiver context;
-	@Mock Vocabulary verbs;
+	@Mock Vocabulary vocabulary;
 	WordNode verbTree = WordNode.newRoot();
 	List<String> articles = new ArrayList<String>();
 	List<String> prepositions = new ArrayList<String>();
@@ -27,15 +27,15 @@ public class ParserTest {
 	@Before public void setUp() {
 		initMocks(this);
 		
-		when(verbs.getVerbTree()).thenReturn(verbTree);
+		when(vocabulary.getVerbTree()).thenReturn(verbTree);
+		when(vocabulary.getArticles()).thenReturn(articles);
+		when(vocabulary.getPrepositions()).thenReturn(prepositions);
 		
 		verbTree.addWords("pick up");
 		articles.add("the");
 		prepositions.add("with");
 		
-		parser.setVocabulary(verbs);
-		parser.setArticles(articles);
-		parser.setPrepositions(prepositions);
+		parser.setVocabulary(vocabulary);
 	}
 	
 	@Test public void testSingleVerb() {

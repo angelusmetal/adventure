@@ -8,7 +8,7 @@ import gnu.trove.map.hash.THashMap;
 import com.adventure.engine.WordNode;
 
 /**
- * This manages everything related to verbs. Until I find a better way or name
+ * This manages everything related to vocabulary. Until I find a better way or name
  * for it.
  * 
  * @author Rodrigo Fernández (angelusmetal@gmail.com)
