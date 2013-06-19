@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import com.adventure.engine.Entity;
 import com.adventure.engine.GameContext;
 import com.adventure.engine.console.Parser;
 import com.adventure.engine.console.Vocabulary;
+import com.adventure.engine.entity.Entity;
 import com.adventure.engine.script.GameContextReader;
 import com.adventure.engine.script.expression.ExpressionParserException;
 import com.adventure.engine.script.expression.VocabularyParser;

@@ -4,6 +4,8 @@ import gnu.trove.map.hash.THashMap;
 
 import com.adventure.engine.console.ParserReceiver;
 import com.adventure.engine.console.Vocabulary;
+import com.adventure.engine.entity.Entity;
+import com.adventure.engine.entity.EntityHandlingException;
 
 public class GameContext implements ParserReceiver {
 
@@ -15,7 +17,6 @@ public class GameContext implements ParserReceiver {
 	
 	
 	public void displayPrompt() {
-		//System.out.println("[" + currentLocation.shortDescription + "]");
 		System.out.print("> ");
 	}
 	
@@ -26,8 +27,13 @@ public class GameContext implements ParserReceiver {
 	
 	@Override
 	public void doAction(String verb) {
-		// See if verb has any use in the current context/location
-		currentLocation.signal(this, verb);
+		// Send signal to current location
+		try {
+			currentLocation.signal(this, verb);
+		} catch (EntityHandlingException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 	@Override
@@ -40,26 +46,36 @@ public class GameContext implements ParserReceiver {
 		
 		// Inventory
 		if ("inventory".equals(object)) {
-			inventory.signal(this, verb);
+			try {
+				inventory.signal(this, verb);
+			} catch (EntityHandlingException e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
 			return;
 		}
 		
 		// Check if the object is a visible entity in this location
 		Entity entity = currentLocation.getEntity(object);
-		if (entity == null || !entity.visible) {
+		if (entity == null || !entity.isVisible()) {
 			display("There is no " + object);
 			return;
 		}
 		
 		// Send signal (verb) to the object
-		entity.signal(this, verb);
+		try {
+			entity.signal(this, verb);
+		} catch (EntityHandlingException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 	@Override
 	public void doActionOnObjectWithModifier(String verb, String object,
 			String preposition, String modifier) {
 		// Synonyms of current location
-		if ("here".equals(object) || "around".equals(object) || currentLocation.name.equals(object)) {
+		if ("here".equals(object) || "around".equals(object) || currentLocation.getName().equals(object)) {
 			doAction(verb);
 			return;
 		}
@@ -76,7 +92,12 @@ public class GameContext implements ParserReceiver {
 		
 		// Inventory
 		if ("inventory".equals(object)) {
-			inventory.signal(this, verb, modifierEntity);
+			try {
+				inventory.signal(this, verb, modifierEntity);
+			} catch (EntityHandlingException e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
 			return;
 		}
 		
@@ -88,11 +109,16 @@ public class GameContext implements ParserReceiver {
 		}
 		
 		// Send signal (verb + modifier) to the object
-		entity.signal(this, verb, modifierEntity);
+		try {
+			entity.signal(this, verb, modifierEntity);
+		} catch (EntityHandlingException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 	public void addToInventory(Entity entity) {
-		display("You picked up " + entity.name);
+		display("You picked up " + entity.getName());
 		inventory.addEntity(entity);
 	}
 

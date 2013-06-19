@@ -1,5 +1,7 @@
 package com.adventure.engine;
 
+import com.adventure.engine.entity.Entity;
+
 import gnu.trove.procedure.TObjectProcedure;
 
 public class Inventory extends Entity {
@@ -11,7 +13,7 @@ public class Inventory extends Entity {
 			entities.forEachValue(new TObjectProcedure<Entity>() {
 				@Override
 				public boolean execute(Entity object) {
-					context.display(" - " + object.shortDescription);
+					context.display(" - " + object.getProperty("shortDescription").getValue().getAsString());
 					return true;
 				}
 			});

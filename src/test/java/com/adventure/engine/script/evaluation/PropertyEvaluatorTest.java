@@ -7,8 +7,8 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
-import com.adventure.engine.Entity;
 import com.adventure.engine.GameContext;
+import com.adventure.engine.entity.Entity;
 import com.adventure.engine.script.syntax.Expression;
 import com.adventure.engine.script.syntax.SimpleValue;
 

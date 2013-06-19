@@ -2,8 +2,8 @@ package com.adventure.engine.script.evaluation;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.adventure.engine.Entity;
 import com.adventure.engine.GameContext;
+import com.adventure.engine.entity.Entity;
 import com.adventure.engine.script.syntax.Expression;
 
 /**
@@ -14,10 +14,10 @@ import com.adventure.engine.script.syntax.Expression;
  */
 public class PropertyEvaluator {
 
-	public Expression evaluate(String property, Entity localEntity, GameContext context) throws EvaluationException {
-		String[] tokens = StringUtils.split(property, '.');
+	public Expression evaluate(String propertyExpression, Entity localEntity, GameContext context) throws EvaluationException {
+		String[] tokens = StringUtils.split(propertyExpression, '.');
 		if (tokens.length == 0 || tokens.length > 2) {
-			throw new EvaluationException(property + " is not a valid property identifier.");
+			throw new EvaluationException(propertyExpression + " is not a valid property identifier.");
 		} else if (tokens.length == 1) {
 			return localEntity.getProperty(tokens[0]);
 		} else {
@@ -27,6 +27,28 @@ public class PropertyEvaluator {
 			} else {
 				return null;
 			}
+		}
+	}
+	
+	public Entity getEntity(String propertyExpression, Entity localEntity, GameContext context) throws EvaluationException {
+		String[] tokens = StringUtils.split(propertyExpression, '.');
+		if (tokens.length == 0 || tokens.length > 2) {
+			throw new EvaluationException(propertyExpression + " is not a valid property identifier.");
+		} else if (tokens.length == 1) {
+			return localEntity;
+		} else {
+			return context.getEntity(tokens[0]);
+		}
+	}
+	
+	public String getProperty(String propertyExpression) throws EvaluationException {
+		String[] tokens = StringUtils.split(propertyExpression, '.');
+		if (tokens.length == 0 || tokens.length > 2) {
+			throw new EvaluationException(propertyExpression + " is not a valid property identifier.");
+		} else if (tokens.length == 1) {
+			return tokens[0];
+		} else {
+			return tokens[1];
 		}
 	}
 }

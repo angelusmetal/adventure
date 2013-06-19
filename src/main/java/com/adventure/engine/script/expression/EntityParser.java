@@ -5,8 +5,8 @@ import gnu.trove.set.hash.THashSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.adventure.engine.Entity;
 import com.adventure.engine.GameContext;
+import com.adventure.engine.entity.Entity;
 import com.adventure.engine.script.syntax.Expression;
 
 /**
@@ -37,6 +37,7 @@ public class EntityParser extends ExpressionParser<Entity> {
 		String entityId = expression.getIdentifier();
 		
 		Entity entity = context.getOrCreateEntity(entityId);
+		entity.setName(entityId);
 		
 		// entity definition should be compound
 		List<Expression> nested = getNested(expression);
@@ -46,12 +47,6 @@ public class EntityParser extends ExpressionParser<Entity> {
 			// Parse special properties
 			if ("connections".equals(identifier)) {
 				addConnections(entity, exp);
-			} else if ("pickable".equals(identifier)) {
-				entity.setPickable(exp.getValue().getAsString().equals("true"));
-			} else if ("visible".equals(identifier)) {
-				entity.setVisible(exp.getValue().getAsString().equals("true"));
-			} else if ("traversable".equals(identifier)) {
-				entity.setTraversable(exp.getValue().getAsString().equals("true"));
 			} else {
 				// Otherwise, add to the pool of user defined properties
 				entity.setProperty(exp.getIdentifier(), exp);

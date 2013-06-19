@@ -36,7 +36,7 @@ public class SyntaxParser {
 	Expression parseExpression(LineAwareBufferedReader reader, int expectedLevel) throws ScriptParsingException, IOException {
 		skipBlankLines(reader);
 		
-		String line = reader.readLine();
+		String line = stripComments(reader.readLine());
 		int currentLine = reader.getCurrentLine();
 		
 		if (line == null) {
@@ -94,12 +94,22 @@ public class SyntaxParser {
 	void skipBlankLines(LineAwareBufferedReader reader) throws IOException {
 		String line = null;
 		do {
-			line = reader.readLine();
+			line = stripComments(reader.readLine()); // Blank lines after stripping comments
 			if (line == null) {
 				return;
 			}
 		} while (line.trim().isEmpty());
 		reader.putBack(line);
+	}
+	
+	String stripComments(String line) {
+		if (line == null) {
+			return null;
+		} else if (line.isEmpty()) {
+			return line;
+		} else {
+			return StringUtils.split(line, '#')[0];
+		}
 	}
 	
 	public class ScriptParsingException extends Exception {
