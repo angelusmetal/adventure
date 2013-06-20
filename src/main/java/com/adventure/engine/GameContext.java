@@ -5,7 +5,7 @@ import gnu.trove.map.hash.THashMap;
 import com.adventure.engine.console.ParserReceiver;
 import com.adventure.engine.console.Vocabulary;
 import com.adventure.engine.entity.Entity;
-import com.adventure.engine.entity.EntityHandlingException;
+import com.adventure.engine.script.evaluation.EvaluationException;
 
 public class GameContext implements ParserReceiver {
 
@@ -30,7 +30,7 @@ public class GameContext implements ParserReceiver {
 		// Send signal to current location
 		try {
 			currentLocation.signal(this, verb);
-		} catch (EntityHandlingException e) {
+		} catch (EvaluationException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -48,7 +48,7 @@ public class GameContext implements ParserReceiver {
 		if ("inventory".equals(object)) {
 			try {
 				inventory.signal(this, verb);
-			} catch (EntityHandlingException e) {
+			} catch (EvaluationException e) {
 				e.printStackTrace();
 				System.exit(1);
 			}
@@ -65,7 +65,7 @@ public class GameContext implements ParserReceiver {
 		// Send signal (verb) to the object
 		try {
 			entity.signal(this, verb);
-		} catch (EntityHandlingException e) {
+		} catch (EvaluationException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -94,7 +94,7 @@ public class GameContext implements ParserReceiver {
 		if ("inventory".equals(object)) {
 			try {
 				inventory.signal(this, verb, preposition, modifierEntity);
-			} catch (EntityHandlingException e) {
+			} catch (EvaluationException e) {
 				e.printStackTrace();
 				System.exit(1);
 			}
@@ -104,6 +104,9 @@ public class GameContext implements ParserReceiver {
 		// Identify the object
 		Entity entity = currentLocation.getEntity(object);
 		if (entity == null) {
+			entity = inventory.getEntity(object);
+		}
+		if (entity == null) {
 			display("There is no " + object);
 			return;
 		}
@@ -111,7 +114,7 @@ public class GameContext implements ParserReceiver {
 		// Send signal (verb + modifier) to the object
 		try {
 			entity.signal(this, verb, preposition, modifierEntity);
-		} catch (EntityHandlingException e) {
+		} catch (EvaluationException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}

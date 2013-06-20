@@ -1,15 +1,13 @@
 package com.adventure.engine.entity;
 
-import java.util.List;
+import gnu.trove.map.hash.THashMap;
 
 import com.adventure.engine.GameContext;
 import com.adventure.engine.console.Vocabulary;
+import com.adventure.engine.script.evaluation.CodeEvaluator;
 import com.adventure.engine.script.evaluation.EvaluationException;
-import com.adventure.engine.script.evaluation.PropertyEvaluator;
 import com.adventure.engine.script.syntax.Expression;
 import com.adventure.engine.script.syntax.SimpleValue;
-
-import gnu.trove.map.hash.THashMap;
 
 public class Entity {
 
@@ -20,7 +18,7 @@ public class Entity {
 	protected THashMap<String, Entity> entities = new THashMap<String, Entity>();
 	protected THashMap<String, Expression> properties = new THashMap<String, Expression>();
 	
-	static protected PropertyEvaluator propertyEvaluator = new PropertyEvaluator();
+	static protected CodeEvaluator codeEvaluator = new CodeEvaluator();
 	
 	public Entity() {
 		setProperty("visible", new Expression("visiable", new SimpleValue("true"), 0));
@@ -28,7 +26,17 @@ public class Entity {
 		setProperty("traversable", new Expression("traversable", new SimpleValue("false"), 0));
 	}
 	
-	final public boolean signal(GameContext context, String verb) throws EntityHandlingException {
+	/**
+	 * Signal an entity with a verb. If the entity has handler code for that
+	 * verb, or for its verb group, it will call that code. Standard actions
+	 * will trigger a default code, regardless of whether they have custom
+	 * handler code.
+	 * @param context 
+	 * @param verb
+	 * @return
+	 * @throws EvaluationException
+	 */
+	final public boolean signal(GameContext context, String verb) throws EvaluationException {
 		Vocabulary vocabulary = context.getVocabulary();
 		String group = vocabulary.getVerbGroup(verb);
 		
@@ -50,17 +58,7 @@ public class Entity {
 		}
 		// if a specific handler was found, evaluate the handler code
 		if (code != null) {
-			List<Expression> nested = code.getValue().getNested();
-			for (Expression exp : nested) {
-				try {
-					// For now, only property assignments
-					Entity entity = propertyEvaluator.getEntity(exp.getIdentifier(), this, context);
-					String property = propertyEvaluator.getProperty(exp.getIdentifier());
-					entity.setProperty(property, exp);
-				} catch (EvaluationException e) {
-					throw new EntityHandlingException(e);
-				}
-			}
+			codeEvaluator.evaluate(code, this, context);
 		}
 		
 		// Then, always call the default handler
@@ -71,14 +69,29 @@ public class Entity {
 		} else if ("@go".equals(group)) {
 			go(context);
 		} else {
-			// Handle non-standard actions
-			return handle(context, verb);
+			if (code == null) {
+				context.display("I can't do that");
+				return false;
+			}
 		}
 		
 		return true;
 	}
 	
-	final public boolean signal(GameContext context, String verb, String preposition, Entity modifier) throws EntityHandlingException {
+	/**
+	 * Signal an entity with a complex message (verb, preposition and modifier
+	 * entity). There is no default handling code, so it will look for custom
+	 * code to handle this verb with the supplied preposition and entity, or
+	 * the same, but for the verb group. Otherwise, a non-successful action
+	 * message is displayed.
+	 * @param context
+	 * @param verb
+	 * @param preposition
+	 * @param modifier
+	 * @return
+	 * @throws EvaluationException
+	 */
+	final public boolean signal(GameContext context, String verb, String preposition, Entity modifier) throws EvaluationException {
 		
 		Vocabulary vocabulary = context.getVocabulary();
 		String group = vocabulary.getVerbGroup(verb);
@@ -101,30 +114,13 @@ public class Entity {
 		}
 		// if a specific handler was found, evaluate the handler code
 		if (code != null) {
-			List<Expression> nested = code.getValue().getNested();
-			for (Expression exp : nested) {
-				try {
-					// TODO Move this code to its own place
-					if ("display".equals(exp.getIdentifier())) {
-						context.display(exp.getValue().getAsString()); // TODO Missing replacement of @annotated expressions
-					} else {
-						// For now, only property assignments
-						Entity entity = propertyEvaluator.getEntity(exp.getIdentifier(), this, context);
-						String property = propertyEvaluator.getProperty(exp.getIdentifier());
-						entity.setProperty(property, exp);
-					}
-				} catch (EvaluationException e) {
-					throw new EntityHandlingException(e);
-				}
-			}
+			codeEvaluator.evaluate(code, this, context);
 			return true;
 		} else {
+			context.display("I can't do that");
 			return false;
 		}
 	}
-	
-	public boolean handle(GameContext context, String verb) { return false; }
-	public boolean handle(GameContext context, String verb, Entity modifier)  { return false; }
 	
 	public void setProperty(String property, Expression value) {
 		properties.put(property, value);
