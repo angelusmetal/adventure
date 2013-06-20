@@ -1,6 +1,8 @@
 package com.adventure.engine.entity;
 
 import gnu.trove.map.hash.THashMap;
+import gnu.trove.procedure.TObjectObjectProcedure;
+import gnu.trove.set.hash.THashSet;
 
 import com.adventure.engine.GameContext;
 import com.adventure.engine.console.Vocabulary;
@@ -12,10 +14,19 @@ import com.adventure.engine.script.syntax.SimpleValue;
 public class Entity {
 
 	protected String name;
-	protected String nonPickableDescription = "I can't pick that";
-	protected String nonTraversableDescription = "I can't go there";
 	
+	/**
+	 * Other entities being referenced from this entities. Each entity may be
+	 * referenced more than once, under different aliases (the key of this map).
+	 */
 	protected THashMap<String, Entity> entities = new THashMap<String, Entity>();
+	/**
+	 * Set of entities that reference this entity.
+	 */
+	protected THashSet<Entity> referencing = new THashSet<Entity>();
+	/**
+	 * Dictionary of properties of this entity.
+	 */
 	protected THashMap<String, Expression> properties = new THashMap<String, Expression>();
 	
 	static protected CodeEvaluator codeEvaluator = new CodeEvaluator();
@@ -70,7 +81,7 @@ public class Entity {
 			go(context);
 		} else {
 			if (code == null) {
-				context.display("I can't do that");
+				context.display(context.getVocabulary().getCantDoMessage());
 				return false;
 			}
 		}
@@ -117,7 +128,7 @@ public class Entity {
 			codeEvaluator.evaluate(code, this, context);
 			return true;
 		} else {
-			context.display("I can't do that");
+			context.display(context.getVocabulary().getCantDoMessage());
 			return false;
 		}
 	}
@@ -139,9 +150,16 @@ public class Entity {
 	
 	protected void pick(GameContext context) {
 		if (isPickable()) {
+			// Remove from all referencing entities
+			for (Entity ref : referencing) {
+				ref.removeEntity(this);
+			}
+			// Clear referenced entities
+			referencing.clear();
+			// Add to inventory
 			context.addToInventory(this);
 		} else {
-			context.display(nonPickableDescription);
+			context.display(context.getVocabulary().getCantPickMessage());
 		}
 	}
 	
@@ -150,7 +168,7 @@ public class Entity {
 			context.setCurrentLocation(this);
 			context.display("Went to " + properties.get("shortDescription").getValue().getAsString());
 		} else {
-			context.display(nonTraversableDescription);
+			context.display(context.getVocabulary().getCantTraverseMessage());
 		}
 	}
 
@@ -162,20 +180,33 @@ public class Entity {
 		this.name = name;
 	}
 
-	public String getNonPickableDescription() {
-		return nonPickableDescription;
-	}
-
-	public void setNonPickableDescription(String nonPickableDescription) {
-		this.nonPickableDescription = nonPickableDescription;
-	}
-
 	public void addEntity(Entity entity) {
-		entities.put(entity.name, entity);
+		addEntity(entity, entity.name);
 	}
 	
 	public void addEntity(Entity entity, String withName) {
+		// Add entity to dictionary
 		entities.put(withName, entity);
+		entity.referencing.add(this);
+	}
+	
+	public void removeEntity(final Entity entity) {
+		// First, find all aliases with which this entity is loaded here
+		final THashSet<String> aliases = new THashSet<String>();
+		entities.forEachEntry(new TObjectObjectProcedure<String, Entity>() {
+			@Override
+			public boolean execute(String alias, Entity e) {
+				if (e.equals(entity)) {
+					aliases.add(alias);
+				}
+				return true;
+			}
+		});
+		
+		// Then delete all aliases for this entity in the entities map
+		for (String alias : aliases) {
+			entities.remove(alias);
+		}
 	}
 	
 	public Entity getEntity(String entity) {
@@ -196,9 +227,7 @@ public class Entity {
 
 	@Override
 	public String toString() {
-		return "Entity [name=" + name + ", nonPickableDescription="
-				+ nonPickableDescription + ", nonTraversableDescription="
-				+ nonTraversableDescription + ", entities=" + entities
+		return "Entity [name=" + name + ", entities=" + entities
 				+ ", properties=" + properties + "]";
 	}
 

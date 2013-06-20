@@ -21,6 +21,10 @@ public class Vocabulary {
 	private THashMap<String, String> verbGroupMapper = new THashMap<String,String>();
 	private List<String> articles = new ArrayList<String>();
 	private List<String> prepositions = new ArrayList<String>();
+	private String cantPickMessage = "";
+	private String cantTraverseMessage = "";
+	private String cantDoMessage = "";
+	private String didntUnderstandMessage = "";
 	
 	public void addVerbGroup(String group, List<String> verbs) throws VocabularyException {
 		verbGroups.put(group, verbs);
@@ -65,5 +69,37 @@ public class Vocabulary {
 		public VocabularyException (String msg) {
 			super(msg);
 		}
+	}
+
+	public void setCantPickMessage(String message) {
+		cantPickMessage = message;
+	}
+
+	public String getCantPickMessage() {
+		return cantPickMessage;
+	}
+
+	public void setCantTraverseMessage(String message) {
+		cantTraverseMessage = message;
+	}
+	
+	public String getCantTraverseMessage() {
+		return cantTraverseMessage;
+	}
+
+	public void setCantDoMessage(String message) {
+		cantDoMessage = message;
+	}
+	
+	public String getCantDoMessage() {
+		return cantDoMessage;
+	}
+
+	public void setDidntUnderstandMessage(String message) {
+		didntUnderstandMessage = message;
+	}
+	
+	public String getDidntUnderstandMessage() {
+		return didntUnderstandMessage;
 	}
 }

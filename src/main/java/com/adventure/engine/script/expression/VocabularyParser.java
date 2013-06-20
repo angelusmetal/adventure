@@ -30,6 +30,14 @@ public class VocabularyParser extends ExpressionParser<Vocabulary> {
 				vocabulary.addArticles(getList(exp));
 			} else if ("prepositions".equals(identifier)) {
 				vocabulary.addPrepositions(getList(exp));
+			} else if ("cantPick".equals(identifier)) {
+				vocabulary.setCantPickMessage(getSimple(exp));
+			} else if ("cantTraverse".equals(identifier)) {
+				vocabulary.setCantTraverseMessage(getSimple(exp));
+			} else if ("cantDo".equals(identifier)) {
+				vocabulary.setCantDoMessage(getSimple(exp));
+			} else if ("didntUnderstand".equals(identifier)) {
+				vocabulary.setDidntUnderstandMessage(getSimple(exp));
 			} else {
 				throw new ExpressionParserException(identifier + " is not valid within expression.", exp);
 			}

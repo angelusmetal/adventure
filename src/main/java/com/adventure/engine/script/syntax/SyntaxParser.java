@@ -105,10 +105,9 @@ public class SyntaxParser {
 	String stripComments(String line) {
 		if (line == null) {
 			return null;
-		} else if (line.isEmpty()) {
-			return line;
 		} else {
-			return StringUtils.split(line, '#')[0];
+			int commentStart = line.indexOf('#');
+			return commentStart == -1 ? line : line.substring(0,commentStart);
 		}
 	}
 	

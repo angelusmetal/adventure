@@ -58,7 +58,7 @@ public class GameContext implements ParserReceiver {
 		// Check if the object is a visible entity in this location
 		Entity entity = currentLocation.getEntity(object);
 		if (entity == null || !entity.isVisible()) {
-			display("There is no " + object);
+			display(vocabulary.getCantDoMessage());
 			return;
 		}
 		
@@ -85,7 +85,7 @@ public class GameContext implements ParserReceiver {
 		if (modifierEntity == null) {
 			modifierEntity = inventory.getEntity(modifier);
 			if (modifierEntity == null) {
-				display("There is no " + modifier);
+				display(vocabulary.getCantDoMessage());
 				return;
 			}
 		}
@@ -107,7 +107,7 @@ public class GameContext implements ParserReceiver {
 			entity = inventory.getEntity(object);
 		}
 		if (entity == null) {
-			display("There is no " + object);
+			display(vocabulary.getCantDoMessage());
 			return;
 		}
 		
