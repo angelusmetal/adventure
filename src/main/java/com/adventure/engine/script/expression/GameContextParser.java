@@ -3,6 +3,7 @@ package com.adventure.engine.script.expression;
 import java.util.List;
 
 import com.adventure.engine.GameContext;
+import com.adventure.engine.entity.Entity;
 import com.adventure.engine.script.syntax.Expression;
 
 /**
@@ -21,9 +22,9 @@ public class GameContextParser extends ExpressionParser<GameContext> {
 		// here...
 		EntityParser entityParser = new EntityParser(context);
 		
-		// vocabulary definition should be compound
 		List<Expression> nested = getNested(expression);
-		
+
+		// Parse context
 		for (Expression exp : nested) {
 			String identifier = exp.getIdentifier();
 			
@@ -34,7 +35,44 @@ public class GameContextParser extends ExpressionParser<GameContext> {
 			}
 		}
 		
+		// Configure start
+		Entity start = context.getEntity("@start");
+		
+		String startingLocation = start.getProperty("location").getValue().getAsString();
+		context.setCurrentLocation(context.getEntity(startingLocation));
+
+		sanityCheck(entityParser, startingLocation, context);
+		
 		return context;
+	}
+
+	private boolean sanityCheck(EntityParser entityParser, String startingLocation, GameContext context) {
+		boolean hasErrors = false;
+//		boolean hasWarnings = false;
+
+		// Check for dangling connections
+		List<String> dangling = entityParser.getDanglingConnections();
+		if (dangling.size() > 0) {
+			hasErrors = true;
+			context.getConsole().error("Error: The following entities are being referenced, but never defined:");
+			for (String entity : dangling) {
+				context.getConsole().error("  - " + entity);
+			}
+		}
+		
+		// Check for orphan entities
+		List<String> orphan = entityParser.getOrphanEntities();
+		orphan.remove(startingLocation);
+		orphan.remove("@start");
+		if (orphan.size() > 0) {
+//			hasWarnings = true;
+			context.getConsole().error("Warning: The following entitites are being defined, but never referenced:");
+			for (String entity : orphan) {
+				context.getConsole().error("  - " + entity);
+			}
+		}
+		
+		return hasErrors;
 	}
 
 }

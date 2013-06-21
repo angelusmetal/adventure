@@ -2,7 +2,9 @@ package com.adventure.engine;
 
 import gnu.trove.map.hash.THashMap;
 
+import com.adventure.engine.console.Console;
 import com.adventure.engine.console.ParserReceiver;
+import com.adventure.engine.console.StdConsole;
 import com.adventure.engine.console.Vocabulary;
 import com.adventure.engine.entity.Entity;
 import com.adventure.engine.script.evaluation.EvaluationException;
@@ -14,15 +16,14 @@ public class GameContext implements ParserReceiver {
 	
 	Inventory inventory = new Inventory();
 	Entity currentLocation;
-	
+	Console console = new StdConsole(80);
 	
 	public void displayPrompt() {
 		System.out.print("> ");
 	}
 	
-	@Override
-	public void display(String text) {
-		System.out.println(text);
+	public Console getConsole() {
+		return console;
 	}
 	
 	@Override
@@ -58,7 +59,7 @@ public class GameContext implements ParserReceiver {
 		// Check if the object is a visible entity in this location
 		Entity entity = currentLocation.getEntity(object);
 		if (entity == null || !entity.isVisible()) {
-			display(vocabulary.getCantDoMessage());
+			console.display(vocabulary.getCantDoMessage());
 			return;
 		}
 		
@@ -85,7 +86,7 @@ public class GameContext implements ParserReceiver {
 		if (modifierEntity == null) {
 			modifierEntity = inventory.getEntity(modifier);
 			if (modifierEntity == null) {
-				display(vocabulary.getCantDoMessage());
+				console.display(vocabulary.getCantDoMessage());
 				return;
 			}
 		}
@@ -107,7 +108,7 @@ public class GameContext implements ParserReceiver {
 			entity = inventory.getEntity(object);
 		}
 		if (entity == null) {
-			display(vocabulary.getCantDoMessage());
+			console.display(vocabulary.getCantDoMessage());
 			return;
 		}
 		
@@ -121,7 +122,7 @@ public class GameContext implements ParserReceiver {
 	}
 
 	public void addToInventory(Entity entity) {
-		display("You picked up " + entity.getName());
+		console.display("You picked up " + entity.getName());
 		inventory.addEntity(entity);
 	}
 

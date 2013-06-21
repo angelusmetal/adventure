@@ -61,15 +61,10 @@ public class Runner {
 		
 		// Configure parser
 		parser.setVocabulary(context.getVocabulary());
-
-		// Start configuration
-		start = context.getEntity("@start");
 		
-		String startingLocation = start.getProperty("location").getValue().getAsString();
-		context.setCurrentLocation(context.getEntity(startingLocation));
-
+		start = context.getEntity("@start");
 		String welcome = start.getProperty("welcome").getValue().getAsString();
-		context.display(welcome);
+		context.getConsole().display(welcome);
 	}
 	
 	private void mainLoop() {
@@ -78,7 +73,7 @@ public class Runner {
 		try {
 			context.displayPrompt();
 			while ((sentence = bf.readLine()) != null) {
-				parser.parse(sentence, context);
+				parser.parse(sentence, context, context.getConsole());
 				context.displayPrompt();
 			}
 		} catch (IOException e) {

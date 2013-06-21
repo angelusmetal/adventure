@@ -35,6 +35,7 @@ public class EntityParser extends ExpressionParser<Entity> {
 
 		// Get or create entity
 		String entityId = expression.getIdentifier();
+		populated.add(entityId);
 		
 		Entity entity = context.getOrCreateEntity(entityId);
 		entity.setName(entityId);
@@ -75,6 +76,7 @@ public class EntityParser extends ExpressionParser<Entity> {
 			
 			// Get or create connected entity
 			Entity destination = context.getOrCreateEntity(connection.getIdentifier());
+			referenced.add(connection.getIdentifier());
 			
 			// Reference that entity with all the aliases in the list
 			List<String> aliases = connection.getValue().getAsList();
@@ -93,6 +95,21 @@ public class EntityParser extends ExpressionParser<Entity> {
 		List<String> dangling = new ArrayList<String>();
 		for (String ref : referenced) {
 			if (!populated.contains(ref)) {
+				dangling.add(ref);
+			}
+		}
+		return dangling;
+	}
+
+	/**
+	 * Find out all the entity ids that are defined, but never referenced from
+	 * other entities.
+	 * @return A list with all the orphan entities, which might be empty.
+	 */
+	public List<String> getOrphanEntities() {
+		List<String> dangling = new ArrayList<String>();
+		for (String ref : populated) {
+			if (!referenced.contains(ref)) {
 				dangling.add(ref);
 			}
 		}

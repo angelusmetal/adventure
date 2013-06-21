@@ -98,11 +98,6 @@ darkFigure:
 	on @talk:
 		exit: As you attempt to speak, your voice flows through the air but gets sucked in the blackness of the shape, a blackness which widens and begins to engulf the light around. There is no more sound or light, only black. 
 		
-library:
-	shortDescription: the library
-	longDescription: The library is as tall as the house and two of its four walls frame a huge window hidden behind a thick curtain, which no doubt played an important part on preserving the countless books that sit on the massive bookshelves. There are thousands of books, several lifespans of reading. The corner of the room where the 2 windowed walls meet is rounded, so it, in fact, is one continuous window that spans the two walls. And along its whole run, a likewise long and curved seat housed comfortable readings by the sunlight. An ebony table seats at one side with a lamp and a magnifying glass.
-	traversable: true
-		
 mainDoor:
 	shortDescription: The main door
 	longDescription: The massive wooden doors are locked shut

@@ -15,7 +15,7 @@ public class Parser {
 		this.vocabulary = vocabulary;
 	}
 	
-	public void parse(String sentence, ParserReceiver receiver) {
+	public void parse(String sentence, ParserReceiver receiver, Console console) {
 		// Tokenize
 		String[] tokens = StringUtils.split(sentence.toLowerCase());
 		
@@ -23,7 +23,7 @@ public class Parser {
 		WordNode verb = vocabulary.getVerbTree().find(tokens);
 		
 		if (verb == null) {
-			receiver.display(vocabulary.getDidntUnderstandMessage());
+			console.display(vocabulary.getDidntUnderstandMessage());
 			return;
 		}
 		

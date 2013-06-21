@@ -81,7 +81,7 @@ public class Entity {
 			go(context);
 		} else {
 			if (code == null) {
-				context.display(context.getVocabulary().getCantDoMessage());
+				context.getConsole().display(context.getVocabulary().getCantDoMessage());
 				return false;
 			}
 		}
@@ -128,7 +128,7 @@ public class Entity {
 			codeEvaluator.evaluate(code, this, context);
 			return true;
 		} else {
-			context.display(context.getVocabulary().getCantDoMessage());
+			context.getConsole().display(context.getVocabulary().getCantDoMessage());
 			return false;
 		}
 	}
@@ -145,7 +145,7 @@ public class Entity {
 	 * Default actions
 	 */
 	protected void look(GameContext context) {
-		context.display(properties.get("longDescription").getValue().getAsString());
+		context.getConsole().display(properties.get("longDescription").getValue().getAsString());
 	}
 	
 	protected void pick(GameContext context) {
@@ -159,16 +159,16 @@ public class Entity {
 			// Add to inventory
 			context.addToInventory(this);
 		} else {
-			context.display(context.getVocabulary().getCantPickMessage());
+			context.getConsole().display(context.getVocabulary().getCantPickMessage());
 		}
 	}
 	
 	protected void go(GameContext context) {
 		if (isTraversable()) {
 			context.setCurrentLocation(this);
-			context.display("Went to " + properties.get("shortDescription").getValue().getAsString());
+			context.getConsole().display("Went to " + properties.get("shortDescription").getValue().getAsString());
 		} else {
-			context.display(context.getVocabulary().getCantTraverseMessage());
+			context.getConsole().display(context.getVocabulary().getCantTraverseMessage());
 		}
 	}
 

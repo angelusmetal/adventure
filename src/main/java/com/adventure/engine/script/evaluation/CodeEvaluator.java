@@ -22,9 +22,9 @@ public class CodeEvaluator {
 		for (Expression exp : nested) {
 			// Special meaning expressions
 			if ("display".equals(exp.getIdentifier())) {
-				context.display(exp.getValue().getAsString()); // TODO Missing replacement of @annotated expressions
+				context.getConsole().display(exp.getValue().getAsString()); // TODO Missing replacement of @annotated expressions
 			} else if ("exit".equals(exp.getIdentifier())) {
-				context.display(exp.getValue().getAsString()); // TODO Missing replacement of @annotated expressions
+				context.getConsole().display(exp.getValue().getAsString()); // TODO Missing replacement of @annotated expressions
 				System.exit(0);
 			} 
 			// Normal expression (for now, only assignments
