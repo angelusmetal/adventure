@@ -103,7 +103,8 @@ public class Vocabulary {
 	public void addMagicPhrase(String identifier, String phrase) {
 		// Here the identifier is value instead of key, because the lookup will
 		// be done the other way around.
-		magicPhrases.put(phrase, identifier);
+		// Phrases are lower-cased so they can be recognized regardless of case
+		magicPhrases.put(phrase.toLowerCase(), identifier);
 	}
 	
 	public THashMap<String, String> getMagicPhrases() {

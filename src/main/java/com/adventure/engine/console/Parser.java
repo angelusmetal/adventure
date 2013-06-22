@@ -16,8 +16,17 @@ public class Parser {
 	}
 	
 	public void parse(String sentence, ParserReceiver receiver, Console console) {
+		String normalized = sentence.trim().toLowerCase();
+		
+		// Check if sentence is a known magic phrase
+		String magicPhrase = vocabulary.getMagicPhrases().get(normalized);
+		if (magicPhrase != null) {
+			receiver.magicPhrase(magicPhrase);
+			return;
+		}
+		
 		// Tokenize
-		String[] tokens = StringUtils.split(sentence.toLowerCase());
+		String[] tokens = StringUtils.split(normalized);
 		
 		// Lookup verb
 		WordNode verb = vocabulary.getVerbTree().find(tokens);

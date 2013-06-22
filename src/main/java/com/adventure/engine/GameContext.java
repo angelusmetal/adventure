@@ -127,6 +127,17 @@ public class GameContext implements ParserReceiver {
 			System.exit(1);
 		}
 	}
+	
+	@Override
+	public void magicPhrase(String phrase) {
+		if ("exit".equals(phrase)) {
+			System.exit(0);
+		} else if ("whereAmI".equals(phrase)) {
+			console.display(vocabulary.getMessages().get("currentLocation") + " " + currentLocation.getProperty("shortDescription").getValue().getAsString());
+		} else if ("easterEgg".equals(phrase)) {
+			console.display("With a deep, baritone voice, the world trembles gently as it returns your greetings.");
+		}
+	}
 
 	public void addToInventory(Entity entity, THashSet<String> aliases) {
 		console.display(vocabulary.getMessages().get("pickedUp") + " " + entity.getProperty("shortDescription").getValue().getAsString());

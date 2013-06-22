@@ -19,10 +19,11 @@
 		pickedUp: You picked up
 		emptyInventory: You don't have anything with you right now
 		changedLocation: You went to
+		currentLocation: Your current location is
 	magicPhrases:
 		exit: exit | exit game | quit | quit game
 		goBack: go back
-		whereAmI: where am I
+		whereAmI: where am I | where am I?
 		easterEgg: hello world | hello world!
 
 # Starting location and message
