@@ -27,7 +27,7 @@ public class PropertyEvaluatorTest {
 	}
 	
 	@Test public void testLocalProperty() throws EvaluationException {
-		Expression property = evaluator.evaluate("property", entity, context);
+		Expression property = evaluator.evaluateProperty("property", entity, context);
 		
 		assertEquals(exp, property);
 		verify(entity).getProperty("property");
@@ -35,7 +35,7 @@ public class PropertyEvaluatorTest {
 	}
 	
 	@Test public void testLocalPropertyNonExisting() throws EvaluationException {
-		Expression property = evaluator.evaluate("wrong", entity, context);
+		Expression property = evaluator.evaluateProperty("wrong", entity, context);
 		
 		assertNull(property);
 		verify(entity).getProperty("wrong");
@@ -43,7 +43,7 @@ public class PropertyEvaluatorTest {
 	}
 	
 	@Test public void testAbsoluteProperty() throws EvaluationException {
-		Expression property = evaluator.evaluate("entity.property", entity, context);
+		Expression property = evaluator.evaluateProperty("entity.property", entity, context);
 		
 		assertEquals(exp, property);
 		verify(entity).getProperty("property");
@@ -51,7 +51,7 @@ public class PropertyEvaluatorTest {
 	}
 	
 	@Test public void testAbsolutePropertyNonExistingEntity() throws EvaluationException {
-		Expression property = evaluator.evaluate("wrong.property", entity, context);
+		Expression property = evaluator.evaluateProperty("wrong.property", entity, context);
 		
 		assertNull(property);
 		verify(context).getEntity("wrong");
@@ -59,7 +59,7 @@ public class PropertyEvaluatorTest {
 	}
 	
 	@Test public void testAbsolutePropertyNonExistingProperty() throws EvaluationException {
-		Expression property = evaluator.evaluate("entity.wrong", entity, context);
+		Expression property = evaluator.evaluateProperty("entity.wrong", entity, context);
 		
 		assertNull(property);
 		verify(context).getEntity("entity");
@@ -68,12 +68,12 @@ public class PropertyEvaluatorTest {
 	
 	@Test (expected=EvaluationException.class)
 	public void testTooFewTokens() throws EvaluationException {
-		evaluator.evaluate("", entity, context);
+		evaluator.evaluateProperty("", entity, context);
 	}
 	
 	@Test (expected=EvaluationException.class)
 	public void testTooManyTokens() throws EvaluationException {
-		evaluator.evaluate("1.2.3", entity, context);
+		evaluator.evaluateProperty("1.2.3", entity, context);
 	}
 	
 }

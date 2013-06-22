@@ -14,7 +14,44 @@ import com.adventure.engine.script.syntax.Expression;
  */
 public class PropertyEvaluator {
 
-	public Expression evaluate(String propertyExpression, Entity localEntity, GameContext context) throws EvaluationException {
+	public String evaluate(String expression, Entity localEntity, GameContext context) throws EvaluationException {
+		
+		// A builder for the result and another for the to-be-replaced expression
+		StringBuilder result = new StringBuilder();
+		StringBuilder expr = new StringBuilder();
+		
+		// Scan expression string in one of two modes
+		// Replace captures expression (prepended with @) and then evaluates them and adds them to the result
+		// Non-replace is a pass-through to the result
+		boolean replacing = false;
+		for(int i = 0; i < expression.length(); ++i) {
+			char charAt = expression.charAt(i);
+			if (replacing) {
+				if (charAt == ' ') {
+					replacing = false;
+					result.append(evaluateProperty(expr.toString(), localEntity, context).getValue().getAsString());
+					expr = new StringBuilder();
+				} else {
+					expr.append(charAt);
+				}
+			} else {
+				if (charAt == '@') {
+					replacing = true; // start capturing expression name, but do not include @
+				} else {
+					result.append(charAt);
+				}
+			}
+		}
+
+		// If there's a pending replacement, do it
+		if (expr.length() > 0) {
+			result.append(evaluateProperty(expr.toString(), localEntity, context).getValue().getAsString());
+		}
+		
+		return result.toString();
+	}
+	
+	public Expression evaluateProperty(String propertyExpression, Entity localEntity, GameContext context) throws EvaluationException {
 		String[] tokens = StringUtils.split(propertyExpression, '.');
 		if (tokens.length == 0 || tokens.length > 2) {
 			throw new EvaluationException(propertyExpression + " is not a valid property identifier.");

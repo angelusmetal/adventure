@@ -22,19 +22,25 @@ public class CodeEvaluator {
 		for (Expression exp : nested) {
 			// Special meaning expressions
 			if ("display".equals(exp.getIdentifier())) {
-				context.getConsole().display(exp.getValue().getAsString()); // TODO Missing replacement of @annotated expressions
+				String sentence = exp.getValue().getAsString();
+				sentence = propertyEvaluator.evaluate(sentence, localEntity, context);
+				context.getConsole().display(sentence);
 			} else if ("exit".equals(exp.getIdentifier())) {
-				context.getConsole().display(exp.getValue().getAsString()); // TODO Missing replacement of @annotated expressions
+				String sentence = exp.getValue().getAsString();
+				sentence = propertyEvaluator.evaluate(sentence, localEntity, context);
+				context.getConsole().display(sentence);
 				System.exit(0);
 			} 
-			// Normal expression (for now, only assignments
+			// Normal expression (for now, only assignments)
 			else {
-				// For now, only property assignments
+				// Get property name
 				Entity entity = propertyEvaluator.getEntity(exp.getIdentifier(), localEntity, context);
 				if (entity == null) {
 					throw new EvaluationException("Error while evaluating code at line " + exp.getLineNumber() + "; entity '" + exp.getIdentifier() + "' does not exist.");
 				}
 				String property = propertyEvaluator.getProperty(exp.getIdentifier());
+				
+				// Set expression to property
 				entity.setProperty(property, exp);
 			}
 		}
