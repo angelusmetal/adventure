@@ -23,7 +23,7 @@ public class Parser {
 		WordNode verb = vocabulary.getVerbTree().find(tokens);
 		
 		if (verb == null) {
-			console.display(vocabulary.getDidntUnderstandMessage());
+			console.display(vocabulary.getMessages().get("didntUnderstand"));
 			return;
 		}
 		

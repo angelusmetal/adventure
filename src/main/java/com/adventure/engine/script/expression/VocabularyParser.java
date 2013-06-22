@@ -18,6 +18,8 @@ public class VocabularyParser extends ExpressionParser<Vocabulary> {
 	public Vocabulary parse(Expression expression) throws ExpressionParserException {
 		Vocabulary vocabulary = new Vocabulary();
 		
+		setDefaults(vocabulary);
+		
 		// vocabulary definition should be compound
 		List<Expression> nested = getNested(expression);
 		
@@ -30,14 +32,10 @@ public class VocabularyParser extends ExpressionParser<Vocabulary> {
 				vocabulary.addArticles(getList(exp));
 			} else if ("prepositions".equals(identifier)) {
 				vocabulary.addPrepositions(getList(exp));
-			} else if ("cantPick".equals(identifier)) {
-				vocabulary.setCantPickMessage(getSimple(exp));
-			} else if ("cantTraverse".equals(identifier)) {
-				vocabulary.setCantTraverseMessage(getSimple(exp));
-			} else if ("cantDo".equals(identifier)) {
-				vocabulary.setCantDoMessage(getSimple(exp));
-			} else if ("didntUnderstand".equals(identifier)) {
-				vocabulary.setDidntUnderstandMessage(getSimple(exp));
+			} else if ("messages".equals(identifier)) {
+				parseMessages(vocabulary, exp);
+			} else if ("magicPhrases".equals(identifier)) {
+				parseMagicPhrases(vocabulary, exp);
 			} else {
 				throw new ExpressionParserException(identifier + " is not valid within expression.", exp);
 			}
@@ -47,7 +45,7 @@ public class VocabularyParser extends ExpressionParser<Vocabulary> {
 	}
 	
 	void parseVerbs(Vocabulary vocabulary, Expression expression) throws ExpressionParserException {
-		// vocabulary definition must be compound
+		// verbs definition must be compound
 		List<Expression> nested = getNested(expression);
 		
 		for (Expression exp : nested) {
@@ -64,4 +62,39 @@ public class VocabularyParser extends ExpressionParser<Vocabulary> {
 		}
 	}
 	
+	void parseMessages(Vocabulary vocabulary, Expression expression) throws ExpressionParserException {
+		// messages definition must be compound
+		List<Expression> nested = getNested(expression);
+		
+		for (Expression exp : nested) {
+			// Each entry should be a message string
+			vocabulary.addMessage(exp.getIdentifier(), getSimple(exp));
+		}
+	}
+	
+	void parseMagicPhrases(Vocabulary vocabulary, Expression expression) throws ExpressionParserException {
+		// messages definition must be compound
+		List<Expression> nested = getNested(expression);
+		
+		for (Expression exp : nested) {
+			// Each entry should be a list
+			List<String> phrases = getList(exp);
+			for (String phrase : phrases) {
+				vocabulary.addMagicPhrase(exp.getIdentifier(), phrase);
+			}
+		}
+	}
+	
+	/**
+	 * Add default values to vocabulary, in case they are not defined.
+	 */
+	void setDefaults(Vocabulary vocabulary) {
+		vocabulary.addMessage("cantPick", "I can't pick that");
+		vocabulary.addMessage("cantTraverse", "I can't go there");
+		vocabulary.addMessage("cantDo", "I can't do that");
+		vocabulary.addMessage("didntUnderstand", "I didn't understand that");
+		vocabulary.addMessage("pickedUp", "You picked up");
+		vocabulary.addMessage("emptyInventory", "You don't have anything with you right now");
+		vocabulary.addMessage("changedLocation", "You went to");
+	}
 }

@@ -81,7 +81,7 @@ public class Entity {
 			go(context);
 		} else {
 			if (code == null) {
-				context.getConsole().display(context.getVocabulary().getCantDoMessage());
+				context.getConsole().display(context.getVocabulary().getMessages().get("cantDo"));
 				return false;
 			}
 		}
@@ -128,7 +128,7 @@ public class Entity {
 			codeEvaluator.evaluate(code, this, context);
 			return true;
 		} else {
-			context.getConsole().display(context.getVocabulary().getCantDoMessage());
+			context.getConsole().display(context.getVocabulary().getMessages().get("cantDo"));
 			return false;
 		}
 	}
@@ -150,6 +150,8 @@ public class Entity {
 	
 	protected void pick(GameContext context) {
 		if (isPickable()) {
+			// Get all aliases with which the entity is being referenced as
+			THashSet<String> aliases = context.getCurrentLocation().getAliases(this);
 			// Remove from all referencing entities
 			for (Entity ref : referencing) {
 				ref.removeEntity(this);
@@ -157,18 +159,18 @@ public class Entity {
 			// Clear referenced entities
 			referencing.clear();
 			// Add to inventory
-			context.addToInventory(this);
+			context.addToInventory(this, aliases);
 		} else {
-			context.getConsole().display(context.getVocabulary().getCantPickMessage());
+			context.getConsole().display(context.getVocabulary().getMessages().get("cantPick"));
 		}
 	}
 	
 	protected void go(GameContext context) {
 		if (isTraversable()) {
 			context.setCurrentLocation(this);
-			context.getConsole().display("Went to " + properties.get("shortDescription").getValue().getAsString());
+			context.getConsole().display(context.getVocabulary().getMessages().get("changedLocation") + " " + properties.get("shortDescription").getValue().getAsString());
 		} else {
-			context.getConsole().display(context.getVocabulary().getCantTraverseMessage());
+			context.getConsole().display(context.getVocabulary().getMessages().get("cantTraverse"));
 		}
 	}
 
@@ -180,10 +182,6 @@ public class Entity {
 		this.name = name;
 	}
 
-	public void addEntity(Entity entity) {
-		addEntity(entity, entity.name);
-	}
-	
 	public void addEntity(Entity entity, String withName) {
 		// Add entity to dictionary
 		entities.put(withName, entity);
@@ -191,7 +189,18 @@ public class Entity {
 	}
 	
 	public void removeEntity(final Entity entity) {
-		// First, find all aliases with which this entity is loaded here
+		final THashSet<String> aliases = getAliases(entity);
+		for (String alias : aliases) {
+			entities.remove(alias);
+		}
+	}
+	
+	/**
+	 * Get all the aliases with which this entity is referenced within here.
+	 * @param entity Referenced entity.
+	 * @return A set containing all the aliases.
+	 */
+	public THashSet<String> getAliases(final Entity entity) {
 		final THashSet<String> aliases = new THashSet<String>();
 		entities.forEachEntry(new TObjectObjectProcedure<String, Entity>() {
 			@Override
@@ -202,11 +211,7 @@ public class Entity {
 				return true;
 			}
 		});
-		
-		// Then delete all aliases for this entity in the entities map
-		for (String alias : aliases) {
-			entities.remove(alias);
-		}
+		return aliases;
 	}
 	
 	public Entity getEntity(String entity) {

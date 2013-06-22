@@ -1,6 +1,7 @@
 package com.adventure.engine;
 
 import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.THashSet;
 
 import com.adventure.engine.console.Console;
 import com.adventure.engine.console.ParserReceiver;
@@ -8,6 +9,8 @@ import com.adventure.engine.console.StdConsole;
 import com.adventure.engine.console.Vocabulary;
 import com.adventure.engine.entity.Entity;
 import com.adventure.engine.script.evaluation.EvaluationException;
+import com.adventure.engine.script.syntax.Expression;
+import com.adventure.engine.script.syntax.SimpleValue;
 
 public class GameContext implements ParserReceiver {
 
@@ -58,8 +61,12 @@ public class GameContext implements ParserReceiver {
 		
 		// Check if the object is a visible entity in this location
 		Entity entity = currentLocation.getEntity(object);
+		// Or in the inventory
+		if (entity == null) {
+			entity = inventory.getEntity(object);
+		}
 		if (entity == null || !entity.isVisible()) {
-			console.display(vocabulary.getCantDoMessage());
+			console.display(vocabulary.getMessages().get("cantDo"));
 			return;
 		}
 		
@@ -86,7 +93,7 @@ public class GameContext implements ParserReceiver {
 		if (modifierEntity == null) {
 			modifierEntity = inventory.getEntity(modifier);
 			if (modifierEntity == null) {
-				console.display(vocabulary.getCantDoMessage());
+				console.display(vocabulary.getMessages().get("cantDo"));
 				return;
 			}
 		}
@@ -108,7 +115,7 @@ public class GameContext implements ParserReceiver {
 			entity = inventory.getEntity(object);
 		}
 		if (entity == null) {
-			console.display(vocabulary.getCantDoMessage());
+			console.display(vocabulary.getMessages().get("cantDo"));
 			return;
 		}
 		
@@ -121,9 +128,14 @@ public class GameContext implements ParserReceiver {
 		}
 	}
 
-	public void addToInventory(Entity entity) {
-		console.display("You picked up " + entity.getName());
-		inventory.addEntity(entity);
+	public void addToInventory(Entity entity, THashSet<String> aliases) {
+		console.display(vocabulary.getMessages().get("pickedUp") + " " + entity.getProperty("shortDescription").getValue().getAsString());
+		
+		// The entity is no longer pickable; otherwise you will be able to pick it from your inventory
+		entity.setProperty("pickable", new Expression("pickable", new SimpleValue("false"), -1));
+		for (String alias : aliases) {
+			inventory.addEntity(entity, alias);
+		}
 	}
 
 	public void createEntity(String entityId) {
@@ -162,6 +174,10 @@ public class GameContext implements ParserReceiver {
 
 	public void setVocabulary(Vocabulary vocabulary) {
 		this.vocabulary = vocabulary;
+	}
+
+	public Entity getCurrentLocation() {
+		return currentLocation;
 	}
 
 }

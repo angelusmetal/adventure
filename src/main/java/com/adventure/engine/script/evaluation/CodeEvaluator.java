@@ -31,6 +31,9 @@ public class CodeEvaluator {
 			else {
 				// For now, only property assignments
 				Entity entity = propertyEvaluator.getEntity(exp.getIdentifier(), localEntity, context);
+				if (entity == null) {
+					throw new EvaluationException("Error while evaluating code at line " + exp.getLineNumber() + "; entity '" + exp.getIdentifier() + "' does not exist.");
+				}
 				String property = propertyEvaluator.getProperty(exp.getIdentifier());
 				entity.setProperty(property, exp);
 			}

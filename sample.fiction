@@ -11,12 +11,19 @@
 		@climb: climb | escalate
 	articles: a | the
 	prepositions: with | to
-	
-	# Failure messages
-	cantPick: I can't pick that
-	cantTraverse: I can't go there
-	cantDo: I can't do that
-	didntUnderstand: I didn't understand that
+	messages:
+		cantPick: I can't pick that
+		cantTraverse: I can't go there
+		cantDo: I can't do that
+		didntUnderstand: I didn't understand that
+		pickedUp: You picked up
+		emptyInventory: You don't have anything with you right now
+		changedLocation: You went to
+	magicPhrases:
+		exit: exit | exit game | quit | quit game
+		goBack: go back
+		whereAmI: where am I
+		easterEgg: hello world | hello world!
 
 # Starting location and message
 @start:
@@ -24,25 +31,25 @@
 	welcome: You stand in the front yard of an old house. You remember nothing.
 
 fruits:
-	shortDescription: Some red fruits
+	shortDescription: some red fruits
 	longDescription: Small round red fruits. I hope they are edible.
 	visible: false
 	pickable: true
 	on @give to darkFigure:
 		exit: As you extend your arm to give the fruit away, a smile appears beneath the eyes. A smile so bright that illuminates everything. Everything is white now. You won the game! 
 
-key:
-	shortDescription: An old key
+brassKey:
+	shortDescription: an old key
 	longDescription: A large brass key full of dirt.
 	visible: false
 	pickable: true
 	
 treeMouth:
-	shortDescription: A dark, mouth like cavity.
+	shortDescription: a dark, mouth like cavity.
 	longDescription: A dark, mouth like cavity at the bottom of the tree. It seems to have bits of bones and ashes inside, and between that mess, a brass key.
 	visible: false
 	on @look:
-		key.visible: true
+		brassKey.visible: true
 
 tree:
 	shortDescription: evil looking tree
@@ -69,7 +76,7 @@ frontYard:
 		frontGate: gate | front gate
 		tree: tree
 		treeMouth: cavity | tree cavity | mouth | tree mouth
-		key: key | brass key
+		brassKey: key | brass key
 		fruits: fruit | fruits | berries | red fruit | red fruits | red berries
 
 houseEntry:
