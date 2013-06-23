@@ -218,6 +218,10 @@ public class Entity {
 		return entities.get(entity);
 	}
 	
+	public boolean hasEntity(Entity entity) {
+		return entities.containsValue(entity);
+	}
+	
 	public boolean isPickable() {
 		return "true".equals(getProperty("pickable").getValue().getAsString());
 	}

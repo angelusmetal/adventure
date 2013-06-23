@@ -18,7 +18,7 @@ public class GameContext implements ParserReceiver {
 	Vocabulary vocabulary;
 	
 	Inventory inventory = new Inventory();
-	Entity currentLocation;
+	Entity currentLocation, previousLocation;
 	Console console = new StdConsole(80);
 	
 	public void displayPrompt() {
@@ -43,9 +43,22 @@ public class GameContext implements ParserReceiver {
 	@Override
 	public void doActionOnObject(String verb, String object) {
 		// Synonyms of current location
-		if ("here".equals(object) || "around".equals(object) ||object.equals(currentLocation.getProperty("shortDescription").getValue().getAsString())) {
+		if ("here".equals(object) || "around".equals(object) || object.equals(currentLocation.getProperty("shortDescription").getValue().getAsString())) {
 			doAction(verb);
 			return;
+		}
+		
+		// Last location
+		if ("back".equals(object)) {
+			if (previousLocation != null && currentLocation.hasEntity(previousLocation) && previousLocation.isTraversable() && previousLocation.isVisible()) {
+				try {
+					previousLocation.signal(this, verb);
+					return;
+				} catch (EvaluationException e) {
+					e.printStackTrace();
+					System.exit(1);
+				}
+			}
 		}
 		
 		// Inventory
@@ -83,9 +96,21 @@ public class GameContext implements ParserReceiver {
 	public void doActionOnObjectWithModifier(String verb, String object,
 			String preposition, String modifier) {
 		// Synonyms of current location
-		if ("here".equals(object) || "around".equals(object) || currentLocation.getName().equals(object)) {
+		if ("here".equals(object) || "around".equals(object) || object.equals(currentLocation.getProperty("shortDescription").getValue().getAsString())) {
 			doAction(verb);
 			return;
+		}
+		
+		// Last location
+		if ("back".equals(object)) {
+			if (previousLocation != null && currentLocation.hasEntity(previousLocation) && previousLocation.isTraversable() && previousLocation.isVisible()) {
+				try {
+					previousLocation.signal(this, verb);
+				} catch (EvaluationException e) {
+					e.printStackTrace();
+					System.exit(1);
+				}
+			}
 		}
 		
 		// Identify the modifier
@@ -171,8 +196,9 @@ public class GameContext implements ParserReceiver {
 		return entityDictionary.toString();
 	}
 
-	public void setCurrentLocation(Entity exit) {
-		currentLocation = exit;
+	public void setCurrentLocation(Entity newLocation) {
+		previousLocation = currentLocation;
+		currentLocation = newLocation;
 	}
 	
 	public void setEntityDictionary(THashMap<String, Entity> entityDictionary) {
