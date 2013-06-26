@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.adventure.engine.WordNode;
+import com.adventure.engine.script.evaluation.EvaluationException;
 
 public class Parser {
 
@@ -15,7 +16,7 @@ public class Parser {
 		this.vocabulary = vocabulary;
 	}
 	
-	public void parse(String sentence, ParserReceiver receiver, Console console) {
+	public void parse(String sentence, ParserReceiver receiver, Console console) throws EvaluationException {
 		String normalized = sentence.trim().toLowerCase();
 		
 		// Check if sentence is a known magic phrase

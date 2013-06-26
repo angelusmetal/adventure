@@ -12,6 +12,7 @@ import com.adventure.engine.console.Parser;
 import com.adventure.engine.console.Vocabulary;
 import com.adventure.engine.entity.Entity;
 import com.adventure.engine.script.GameContextReader;
+import com.adventure.engine.script.evaluation.EvaluationException;
 import com.adventure.engine.script.expression.ExpressionParserException;
 import com.adventure.engine.script.syntax.SyntaxParser.ScriptParsingException;
 
@@ -41,15 +42,15 @@ public class Runner {
 		try {
 			readScript(filename);
 		} catch (ExpressionParserException e) {
-			e.printStackTrace();
+			System.err.println("While reading script '" + filename + "': " + e.getMessage());
+			System.exit(1);
+		} catch (ScriptParsingException e) {
+			System.err.println("While reading script '" + filename + "': " + e.getMessage());
 			System.exit(1);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			System.exit(1);
 		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		} catch (ScriptParsingException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -77,6 +78,8 @@ public class Runner {
 				context.displayPrompt();
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (EvaluationException e) {
 			e.printStackTrace();
 		}
 	}

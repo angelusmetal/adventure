@@ -1,0 +1,138 @@
+# Set up known vocabulary
+@vocabulary:
+	verbs:
+		@pick: pick | pick up | get | pluck
+		@look: look | look at | look up | examine | observe
+		@go: go | go to | walk | walk to
+		@use: use
+		@open: open
+		@talk: talk to | ask
+		@give: give | offer
+		@climb: climb | escalate
+		@push: push
+		@pull: pull
+	articles: a | the
+	prepositions: with | to | about | on
+	messages:
+		cantPick: I can't pick that
+		cantTraverse: I can't go there
+		cantDo: I can't do that
+		didntUnderstand: I didn't understand that
+		pickedUp: You picked up
+		emptyInventory: You don't have anything with you right now
+		changedLocation: You went to
+		currentLocation: Your current location is
+	magicPhrases:
+		exit: exit | exit game | quit | quit game
+		whereAmI: where am I | where am I?
+		easterEgg: hello world | hello world!
+	specialEntities:
+		thisLocation: here | around | place
+		lastLocation: back
+		inventory: inventory
+
+# Starting location and message
+@start:
+	location: crypt
+	welcome: You wake up in an dark round room, laying in a cold slab. A persistent foulness stings your nose. As you stand up, you feel numb and rigid. You're naked and cold and your limbs are purple with bruises.
+	
+#
+# The crypt
+#
+
+crypt_floor:
+	longDescription: The floor is made of the same dull stone of the walls, adorned by some dry splotches, brown, red and green.
+	on @look:
+		crypt_bones.visible: true
+		display: You see some burnt bones on the corner of the room.
+		on @look:
+			crypt_bones.visible: true
+
+crypt_ceiling:
+	longDescription: The ceiling is a dome adorned with some vitreaux depicting angels, but is so far up that the light that comes in through the windows barely makes it to where you are.
+	on @look:
+		crypt_ceilingVitreaux.visible: true
+			
+crypt_ceilingVitreaux:
+	longDescription: There are four vitreaux opposite each other, with religious depictions of saints and angels.
+	visible: false
+	
+crypt_walls:
+	longDescription: The round walls are made of dull stone blocks, which may once have formed a smooth surface, but now display cracks and crevices in the block joints.
+	on @look:
+		crypt_wallJoints.visible: true
+
+crypt_wallJoints:
+	longDescription: Nothing there, but mold and lichens.
+	visible: false
+	on @look:
+		crypt_wallLichen.visible: true
+
+crypt_wallLichen:
+	shortDescription: lichen goo
+	longDescription: A gooey green lichen paste.
+	visiable: false
+	pickable: true
+	on @pick
+		display: Yuck! You like collecting odd stuff
+	
+crypt_door:
+	longDescription: A wooden door. Its latch is missing and only the hole remains. It opens to the inside
+	on @open:
+		display: Even though the door doesn't seem to be locked, you'd need to pull it to open, but the latch is missing.
+		crypt_latchHole.visible: true
+		
+crypt_latchHole:
+	longDescription: The latch hole is about one inch wide. Through it you can see white mist on the outside and feel a tenuous cold breeze sipping in.
+	visible: false
+
+crypt_bones:
+	shortDescription: ashen bones
+	longDescription: A few fragments of broken bone. They look like the remains of a femur, although burnt.
+	visible: false
+	pickable: true
+	on @use on crypt_latchHole:
+		display: You push a piece of bone of roughly the same diameter as the hole with force until fits firmly. You made yourself a latch.
+		crypt_door.on @open:
+			display: As you open the door by pulling the bone-latch, the faint lilac light of dawn floods the room.
+			crypt_door.on @open:
+				display: The door is already open.
+#Idem
+	on @use on crypt_latchHole:
+		display: You push a piece of bone of roughly the same diameter as the hole with force until fits firmly. You made yourself a latch.
+		crypt_door.on @open:
+			display: As you open the door by pulling the bone-latch, the faint lilac light of dawn floods the room.
+			crypt_door.on @open:
+				display: The door is already open.
+
+crypt_slab:
+	longDescription: A rectangular marble slab where you laid with some gutters in the edges that look like made to contain dripping liquids.
+	
+crypt:
+	shortDescription: a dark round room
+	longDescription: The round room is narrow and tall, tipped with a dome. Light is scant and the air is damp and full of decay. In the middle of the room is the marble slab where you woke up.
+	on @look:
+		crypt_door.visible: true
+		display: You notice that behind you there is a wooden door.
+		on @look:
+			crypt_door.visible: true
+	connections:
+		crypt_floor: floor |  soil | ground
+		crypt_ceiling: ceiling | roof | dome
+		crypt_ceilingVitreaux: vitreaux | vitreauxes | window | windows
+		crypt_walls: wall | walls | stone wall | stone walls
+		crypt_wallJoints: joint | joints | wall joint | wall joints | crack | cracks | crevice | crevices
+		crypt_wallLichen: mold | lichen | lichens
+		crypt_door: door | doors | wooden door | wooden doors
+		crypt_latchHole: hole | latch hole | door hole
+		crypt_bones: bone | bones | ashen bone | ashen bones | burnt bone | burnt bones
+		crypt_slab: slab | table | marble slab | marble table
+		graveyard: outside
+
+#
+# Graveyard
+#
+
+graveyard:
+	shortDescription: Horray, you made it this far!
+	longDescription: The graveyard ... ooooh!

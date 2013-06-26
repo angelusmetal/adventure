@@ -24,6 +24,10 @@
 		exit: exit | exit game | quit | quit game
 		whereAmI: where am I | where am I?
 		easterEgg: hello world | hello world!
+	specialEntities:
+		thisLocation: here | around | place
+		lastLocation: back
+		inventory: inventory
 
 # Starting location and message
 @start:
@@ -110,7 +114,7 @@ mainDoor:
 	longDescription: The massive wooden doors are locked shut
 	on @open:
 		display: The door is locked.
-	on @open with key:
+	on @open with brassKey:
 		mainHall.traversable: true
 		display: You opened the door of the house. The doors open with a deep sound that echo inside.
 		on @open:

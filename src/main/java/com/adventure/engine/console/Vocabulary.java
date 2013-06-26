@@ -46,13 +46,17 @@ public class Vocabulary {
 	private THashMap<String, String> messages = new THashMap<String, String>();
 	/**
 	 * Map of magic phrases. Each key (actual phrase) maps to an identifier.
-	 * The mapping is done in this fashion because it is easier to check the
-	 * magic phrase, as entered, in the map (as key) and get the corresponding
-	 * identifier, if it's a known magic phrase. If a magic phrase has various
-	 * alternatives, all of them will be different keys that map to the same
-	 * identifier as value.
+	 * There is one key for each variation of the magic phrase and all of them
+	 * map to the same value (the magic phrase identifier).
 	 */
 	private THashMap<String, String> magicPhrases = new THashMap<String, String>();
+	
+	/**
+	 * Map of special entities. Each key (name) maps to a special entity.
+	 * There is one key for each alias of the entity and all of them map to the
+	 * same value (the entity identifier).
+	 */
+	private THashMap<String, String> specialEntities = new THashMap<String, String>();
 	
 	public void addVerbGroup(String group, List<String> verbs) throws VocabularyException {
 		verbGroups.put(group, verbs);
@@ -101,8 +105,6 @@ public class Vocabulary {
 	}
 	
 	public void addMagicPhrase(String identifier, String phrase) {
-		// Here the identifier is value instead of key, because the lookup will
-		// be done the other way around.
 		// Phrases are lower-cased so they can be recognized regardless of case
 		magicPhrases.put(phrase.toLowerCase(), identifier);
 	}
@@ -111,6 +113,16 @@ public class Vocabulary {
 		return magicPhrases;
 	}
 	
+	public void addSpecialEntity(String identifier, String entity) {
+		// Special entities are lower-cased so they can be recognized regardless
+		// of case
+		specialEntities.put(entity.toLowerCase(), identifier);
+	}
+	
+	public THashMap<String, String> getSpecialEntities() {
+		return specialEntities;
+	}
+
 	public class VocabularyException extends Exception {
 		private static final long serialVersionUID = 1L;
 		public VocabularyException (String msg) {

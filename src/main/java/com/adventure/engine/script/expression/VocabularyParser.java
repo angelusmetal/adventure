@@ -36,6 +36,8 @@ public class VocabularyParser extends ExpressionParser<Vocabulary> {
 				parseMessages(vocabulary, exp);
 			} else if ("magicPhrases".equals(identifier)) {
 				parseMagicPhrases(vocabulary, exp);
+			} else if ("specialEntities".equals(identifier)) {
+				parseSpecialEntities(vocabulary, exp);
 			} else {
 				throw new ExpressionParserException(identifier + " is not valid within expression.", exp);
 			}
@@ -62,27 +64,72 @@ public class VocabularyParser extends ExpressionParser<Vocabulary> {
 		}
 	}
 	
+	/**
+	 * Add each message to the vocabulary
+	 */
 	void parseMessages(Vocabulary vocabulary, Expression expression) throws ExpressionParserException {
-		// messages definition must be compound
 		List<Expression> nested = getNested(expression);
-		
 		for (Expression exp : nested) {
-			// Each entry should be a message string
+			if (!isValidMessage(exp.getIdentifier())) {
+				throw new ExpressionParserException("'" + exp.getIdentifier() + "' is not valid message type.", exp);
+			}
 			vocabulary.addMessage(exp.getIdentifier(), getSimple(exp));
 		}
 	}
 	
+	boolean isValidMessage(String identifier) {
+		return  "cantPick".equals(identifier) ||
+				"cantTraverse".equals(identifier) ||
+				"cantDo".equals(identifier) ||
+				"didntUnderstand".equals(identifier) ||
+				"pickedUp".equals(identifier) ||
+				"emptyInventory".equals(identifier) ||
+				"changedLocation".equals(identifier) ||
+				"currentLocation".equals(identifier);
+	}
+	
+	/**
+	 * Add each magic phrase to the vocabulary
+	 */
 	void parseMagicPhrases(Vocabulary vocabulary, Expression expression) throws ExpressionParserException {
-		// messages definition must be compound
 		List<Expression> nested = getNested(expression);
-		
 		for (Expression exp : nested) {
-			// Each entry should be a list
 			List<String> phrases = getList(exp);
 			for (String phrase : phrases) {
+				if (!isValidMagicPhrase(exp.getIdentifier())) {
+					throw new ExpressionParserException("'" + exp.getIdentifier() + "' is not valid magic phrase.", exp);
+				}
 				vocabulary.addMagicPhrase(exp.getIdentifier(), phrase);
 			}
 		}
+	}
+
+	boolean isValidMagicPhrase(String identifier) {
+		return  "exit".equals(identifier) ||
+				"whereAmI".equals(identifier) ||
+				"easterEgg".equals(identifier);
+	}
+	
+	/**
+	 * Add special entity to the vocabulary
+	 */
+	void parseSpecialEntities(Vocabulary vocabulary, Expression expression) throws ExpressionParserException {
+		List<Expression> nested = getNested(expression);
+		for (Expression exp : nested) {
+			List<String> entities = getList(exp);
+			for (String entity : entities) {
+				if (!isValidSpecialEntity(exp.getIdentifier())) {
+					throw new ExpressionParserException("'" + exp.getIdentifier() + "' is not valid special entity.", exp);
+				}
+				vocabulary.addSpecialEntity(exp.getIdentifier(), entity);
+			}
+		}
+	}
+	
+	boolean isValidSpecialEntity(String identifier) {
+		return  "thisLocation".equals(identifier) ||
+				"lastLocation".equals(identifier) ||
+				"inventory".equals(identifier);
 	}
 	
 	/**

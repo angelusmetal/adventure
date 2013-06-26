@@ -30,8 +30,8 @@ public class GameContext implements ParserReceiver {
 	}
 	
 	@Override
-	public void doAction(String verb) {
 		// Send signal to current location
+	public void doAction(String verb) {
 		try {
 			currentLocation.signal(this, verb);
 		} catch (EvaluationException e) {
@@ -41,116 +41,61 @@ public class GameContext implements ParserReceiver {
 	}
 
 	@Override
-	public void doActionOnObject(String verb, String object) {
-		// Synonyms of current location
-		if ("here".equals(object) || "around".equals(object) || object.equals(currentLocation.getProperty("shortDescription").getValue().getAsString())) {
-			doAction(verb);
-			return;
-		}
-		
-		// Last location
-		if ("back".equals(object)) {
-			if (previousLocation != null && currentLocation.hasEntity(previousLocation) && previousLocation.isTraversable() && previousLocation.isVisible()) {
-				try {
-					previousLocation.signal(this, verb);
-					return;
-				} catch (EvaluationException e) {
-					e.printStackTrace();
-					System.exit(1);
-				}
-			}
-		}
-		
-		// Inventory
-		if ("inventory".equals(object)) {
-			try {
-				inventory.signal(this, verb);
-			} catch (EvaluationException e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
-			return;
-		}
-		
-		// Check if the object is a visible entity in this location
-		Entity entity = currentLocation.getEntity(object);
-		// Or in the inventory
-		if (entity == null) {
-			entity = inventory.getEntity(object);
-		}
-		if (entity == null || !entity.isVisible()) {
-			console.display(vocabulary.getMessages().get("cantDo"));
-			return;
-		}
-		
-		// Send signal (verb) to the object
-		try {
+	public void doActionOnObject(String verb, String object) throws EvaluationException {
+		Entity entity = lookupEntity(object);
+		if (entity != null) {
 			entity.signal(this, verb);
-		} catch (EvaluationException e) {
-			e.printStackTrace();
-			System.exit(1);
 		}
 	}
 
 	@Override
 	public void doActionOnObjectWithModifier(String verb, String object,
-			String preposition, String modifier) {
-		// Synonyms of current location
-		if ("here".equals(object) || "around".equals(object) || object.equals(currentLocation.getProperty("shortDescription").getValue().getAsString())) {
-			doAction(verb);
-			return;
-		}
+			String preposition, String modifier) throws EvaluationException {
 		
-		// Last location
-		if ("back".equals(object)) {
-			if (previousLocation != null && currentLocation.hasEntity(previousLocation) && previousLocation.isTraversable() && previousLocation.isVisible()) {
-				try {
-					previousLocation.signal(this, verb);
-				} catch (EvaluationException e) {
-					e.printStackTrace();
-					System.exit(1);
-				}
-			}
-		}
+		Entity entity = lookupEntity(object);
+		Entity modifierEntity = lookupEntity(modifier);
 		
-		// Identify the modifier
-		Entity modifierEntity = currentLocation.getEntity(modifier);
-		if (modifierEntity == null) {
-			modifierEntity = inventory.getEntity(modifier);
-			if (modifierEntity == null) {
-				console.display(vocabulary.getMessages().get("cantDo"));
-				return;
-			}
-		}
-		
-		// Inventory
-		if ("inventory".equals(object)) {
-			try {
-				inventory.signal(this, verb, preposition, modifierEntity);
-			} catch (EvaluationException e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
-			return;
-		}
-		
-		// Identify the object
-		Entity entity = currentLocation.getEntity(object);
-		if (entity == null) {
-			entity = inventory.getEntity(object);
-		}
-		if (entity == null) {
-			console.display(vocabulary.getMessages().get("cantDo"));
-			return;
-		}
-		
-		// Send signal (verb + modifier) to the object
-		try {
+		if (entity != null && modifierEntity != null) {
 			entity.signal(this, verb, preposition, modifierEntity);
-		} catch (EvaluationException e) {
-			e.printStackTrace();
-			System.exit(1);
 		}
+	}
+	
+	/**
+	 * Look up an entity.
+	 * 
+	 * Determine if the entity is a special entity (current location, previous
+	 * location, inventory, etc), an entity in the current location or an
+	 * entity in the inventory.
+	 * @param object Entity name (not id).
+	 * @return Entity or null if the entity was not identified.
+	 */
+	private Entity lookupEntity(String object) {
+		
+		Entity entity = null;
+		
+		String specialEntity = vocabulary.getSpecialEntities().get(object);
+		// Check if entity is a special entity
+		if (specialEntity != null) {
+			if (specialEntity.equals("thisLocation")) {
+				entity = currentLocation;
+			} else if (specialEntity.equals("lastLocation")) {
+				entity = previousLocation;
+			} else if (specialEntity.equals("inventory")) {
+				entity = inventory;
+			}
+		} else {
+			// Look up entity on current location, or on inventory
+			entity = currentLocation.getEntity(object);
+			if (entity == null) {
+				entity = inventory.getEntity(object);
+			}
+			// If not found or can't receive messages 
+			if (entity == null || !entity.isVisible()) {
+				console.display(vocabulary.getMessages().get("cantDo"));
+				entity = null;
+			}
+		}
+		return entity;
 	}
 	
 	@Override

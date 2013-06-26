@@ -12,6 +12,7 @@ import com.adventure.engine.console.Console;
 import com.adventure.engine.console.Parser;
 import com.adventure.engine.console.ParserReceiver;
 import com.adventure.engine.console.Vocabulary;
+import com.adventure.engine.script.evaluation.EvaluationException;
 
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.mockito.Mockito.*;
@@ -40,42 +41,42 @@ public class ParserTest {
 		parser.setVocabulary(vocabulary);
 	}
 	
-	@Test public void testSingleVerb() {
+	@Test public void testSingleVerb() throws EvaluationException {
 		parser.parse("pick", context, console);
 		verify(context).doAction("pick");
 	}
 	
-	@Test public void testCompoundVerb() {
+	@Test public void testCompoundVerb() throws EvaluationException {
 		parser.parse("pick up", context, console);
 		verify(context).doAction("pick up");
 	}
 	
-	@Test public void testSingleVerbObject() {
+	@Test public void testSingleVerbObject() throws EvaluationException {
 		parser.parse("pick coal", context, console);
 		verify(context).doActionOnObject("pick", "coal");
 	}
 	
-	@Test public void testSingleVerbArticleObject() {
+	@Test public void testSingleVerbArticleObject() throws EvaluationException {
 		parser.parse("pick the coal", context, console);
 		verify(context).doActionOnObject("pick", "coal");
 	}
 	
-	@Test public void testCompoundVerbObject() {
+	@Test public void testCompoundVerbObject() throws EvaluationException {
 		parser.parse("pick up coal", context, console);
 		verify(context).doActionOnObject("pick up", "coal");
 	}
 	
-	@Test public void testCompoundVerbArticleObject() {
+	@Test public void testCompoundVerbArticleObject() throws EvaluationException {
 		parser.parse("pick up the coal", context, console);
 		verify(context).doActionOnObject("pick up", "coal");
 	}
 	
-	@Test public void testCompoundVerbArticleObjectWithModifier() {
+	@Test public void testCompoundVerbArticleObjectWithModifier() throws EvaluationException {
 		parser.parse("pick up the coal with gloves", context, console);
 		verify(context).doActionOnObjectWithModifier("pick up", "coal", "with", "gloves");
 	}
 	
-	@Test public void testCompoundVerbArticleObjectWithModifierUnknownPreposition() {
+	@Test public void testCompoundVerbArticleObjectWithModifierUnknownPreposition() throws EvaluationException {
 		parser.parse("pick up the coal under gloves", context, console);
 		verify(context, never()).doActionOnObjectWithModifier(anyString(), anyString(), anyString(), anyString());
 	}

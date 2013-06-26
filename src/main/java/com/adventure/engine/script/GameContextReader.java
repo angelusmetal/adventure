@@ -20,10 +20,10 @@ public class GameContextReader {
 	/**
 	 * Read an {@link InputStream} and create a {@link GameContext} from that.
 	 * @param stream
-	 * @return
-	 * @throws IOException
-	 * @throws ScriptParsingException
-	 * @throws ExpressionParserException 
+	 * @return Initialized GameContext.
+	 * @throws IOException If there is an IO error.
+	 * @throws ScriptParsingException If script is malformed.
+	 * @throws ExpressionParserException If syntax is invalid.
 	 */
 	public GameContext readFrom(InputStream stream) throws IOException, ScriptParsingException, ExpressionParserException {
 		
