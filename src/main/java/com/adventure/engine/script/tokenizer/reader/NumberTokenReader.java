@@ -11,7 +11,7 @@ public class NumberTokenReader extends AbstractTokenReader {
 
 	@Override
 	protected boolean belongs(int c) {
-		return Character.isLetter(c);
+		return Character.isDigit(c);
 	}
 
 }
