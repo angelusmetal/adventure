@@ -1,0 +1,107 @@
+// Var is both a variable and a type. If something inherits verb, it inherits it as it was defined (not the current status)
+var verb;
+
+// These verbs are defined in the global namespace
+verb pickup;
+verb look;
+verb goto;
+verb use;
+verb open;
+verb talk;
+verb give;
+verb climb;
+verb quit;
+
+var vocabulary {
+	// Connect to verbs
+	connect pickup "pick";		// all objects can have connections
+	connect pickup "pick up";
+	connect pickup "get";
+	connect pickup "pluck";
+	connect look "look";
+	connect look "look at";
+	connect look "look up";
+	connect look "examine";
+	connect look "observe";
+	connect goto "go";
+	connect goto "go to";
+	connect goto "walk";
+	connect goto "walk to";
+	connect use "use";
+	connect open "open";
+	connect talk "talk";
+	connect talk "talk to";
+	connect talk "ask";
+	connect talk "ask to";
+	connect give "give";
+	connect climb "climb";
+	connect climb "escalate";
+	
+	// Commands
+	connect quit "quit";
+	connect quit "quit game";
+	connect quit "exit";
+	connect quit "exit game";
+}
+
+on quit {
+	console.display "Thanks for playing";
+	console.exit;
+}
+
+// Location code
+var location;
+
+location kitchen {
+	connect bathroom "north";
+	connect bathroom "bathroom";
+}
+
+location bathroom {
+	connect kitchen "south";
+	connect kitchen "kitchen";
+}
+
+// Entity
+var entity {			// typeof == entity
+	pickable = false;
+}
+
+entity cat {			// typeof == entity | cat
+	pickable = true;	// override pickable from entity
+	weight = 5;
+}
+
+cat pupi {				// typeof == entity | cat | pupi
+	name = "Pupi";		// inherits pickable = true and weight
+}
+
+kitchen.connect pupi "pupi";
+pupi.location = kitchen;
+
+// Signal handlers
+on pickup object(entity) {		// could be type or entity name (e.g. entity | cat | pupi)
+	if object.pickable == true {
+		inventory.add entity;
+		object.location.disconnect object;
+		object.location = inventory;
+	} else {
+		console.display "You can't pick that up.";
+	}
+}
+
+on open object(pupi) prep(with) modifier(entity) {
+	if object == door and
+		(modifier == key or modifier == stick) {
+		hall.connect tower as "stairs";
+		hall.connect tower as "door";
+	} else {
+		console.display "You can't pick that up.";
+	}
+}
+
+on touch pupi {
+	console.display "Pupi jumps into your pocket!";
+	inventory.add pupi;
+}
+

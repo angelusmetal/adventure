@@ -47,8 +47,8 @@ public class ScriptTokenizer {
 
 		LineColumnReader reader = new LineColumnReader(new InputStreamReader(stream));
 		
+		List<Token> tokens = new LinkedList<Token>();
 		try {
-			List<Token> tokens = new LinkedList<Token>();
 			
 			while (reader.ready()) {
 				int c = reader.read();
@@ -67,7 +67,10 @@ public class ScriptTokenizer {
 			}
 			
 			return tokens;
-			
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw e;
 		} finally {
 			reader.close();
 		}

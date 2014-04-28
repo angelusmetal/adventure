@@ -28,19 +28,20 @@ public enum TokenType {
 	MINUS_OP,	// -
 	TIMES_OP,	// *
 	DIV_OP,		// /
-	AND_OP,		// and
-	OR_OP,		// or
-	XOR_OP,		// xor
-	// Booleans
-	TRUE,		// true
-	FALSE,		// false
-	// Control structures
-	IF,			// if
-	ELSE,		// else
-	// What about keywords; do they fit here?
-	// Having them here leaves them out of the name resolution, which may be what we want
-	VAR,
-	ON,
-	CONNECT,
-	DISCONNECT,
+	// For now, all word-based stuff won't be getting their own token; I guess it makes more sense for that syntactic meaning to happen elsewhere
+//	AND_OP,		// and
+//	OR_OP,		// or
+//	XOR_OP,		// xor
+//	// Booleans
+//	TRUE,		// true
+//	FALSE,		// false
+//	// Control structures
+//	IF,			// if
+//	ELSE,		// else
+//	// What about keywords; do they fit here?
+//	// Having them here leaves them out of the name resolution, which may be what we want
+//	VAR,
+//	ON,
+//	CONNECT,
+//	DISCONNECT,
 }

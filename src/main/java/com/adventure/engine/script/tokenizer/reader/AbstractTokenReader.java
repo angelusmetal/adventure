@@ -25,6 +25,8 @@ public abstract class AbstractTokenReader implements TokenReader {
 				// Characters belonging to the token are appended
 				reader.mark(1);
 				sb.append((char)c);
+			} else if (c == -1) {
+				break; // EOF - No attempt to reset...
 			} else {
 				// Otherwise, rewind one char
 				reader.reset();
