@@ -1,4 +1,4 @@
-package com.adventure.engine.script.tokenizer;
+package com.adventure.engine.script.token;
 
 /**
  * Describes a token type.

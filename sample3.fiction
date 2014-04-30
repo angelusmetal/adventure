@@ -52,15 +52,13 @@ on quit {
 // Location code
 var location;
 
-location kitchen {
-	connect bathroom "north";
-	connect bathroom "bathroom";
-}
+location kitchen;
+location bathroom;
 
-location bathroom {
-	connect kitchen "south";
-	connect kitchen "kitchen";
-}
+kitchen.connect bathroom "north";
+kitchen.connect bathroom "bathroom";
+bathroom.connect kitchen "south";
+bathroom.connect kitchen "kitchen";
 
 // Entity
 var entity {			// typeof == entity

@@ -1,4 +1,4 @@
-package com.adventure.engine.script.tokenizer;
+package com.adventure.engine.script.token;
 
 /**
  * Represents a token read from a source file.

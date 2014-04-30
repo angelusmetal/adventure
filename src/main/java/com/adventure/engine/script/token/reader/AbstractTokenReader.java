@@ -1,11 +1,20 @@
-package com.adventure.engine.script.tokenizer.reader;
+package com.adventure.engine.script.token.reader;
 
 import java.io.IOException;
 
-import com.adventure.engine.script.tokenizer.LineColumnReader;
-import com.adventure.engine.script.tokenizer.Token;
-import com.adventure.engine.script.tokenizer.TokenType;
+import com.adventure.engine.script.token.LineColumnReader;
+import com.adventure.engine.script.token.Token;
+import com.adventure.engine.script.token.TokenType;
 
+/**
+ * Provides basic token parsing where token appends characters until a non
+ * matching character is found.
+ * 
+ * The criteria to determine whether a character belongs to the token, and the
+ * resulting token type are both abstracted to derived classes.
+ * 
+ * @author Rodrigo Fernandez (angelusmetal@gmail.com)
+ */
 public abstract class AbstractTokenReader implements TokenReader {
 
 	public Token getToken(LineColumnReader reader, int c) throws IOException {
@@ -34,7 +43,6 @@ public abstract class AbstractTokenReader implements TokenReader {
 			}
 		}
 		
-		// Return a token of the appropriate type
 		return sb.toString();
 	}
 	

@@ -1,11 +1,22 @@
-package com.adventure.engine.script.tokenizer.reader;
+package com.adventure.engine.script.token.reader;
 
 import java.io.IOException;
 
-import com.adventure.engine.script.tokenizer.LineColumnReader;
-import com.adventure.engine.script.tokenizer.Token;
-import com.adventure.engine.script.tokenizer.TokenType;
+import com.adventure.engine.script.token.LineColumnReader;
+import com.adventure.engine.script.token.Token;
+import com.adventure.engine.script.token.TokenType;
 
+/**
+ * Reads string tokens (enclosed in double quotes). Backslashes are used to
+ * escape characters:
+ * <ul>
+ *   <li>\n, \r, \t represent new line, carriage return and tab chars, respectively</li>
+ *   <li>\xxx (where xxx are digits) can represent any char by its numerical value</li>
+ *   <li>\x (where x is any character) represents the character itself. It can
+ *   be used to escape quotes, backslashes or any other character.</li>
+ * </ul>
+ * @author Rodrigo Fernandez (angelusmetal@gmail.com)
+ */
 public class StringTokenReader implements TokenReader {
 
 	private NumberTokenReader numberReader = new NumberTokenReader();

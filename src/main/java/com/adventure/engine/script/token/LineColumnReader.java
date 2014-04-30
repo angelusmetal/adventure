@@ -1,4 +1,4 @@
-package com.adventure.engine.script.tokenizer;
+package com.adventure.engine.script.token;
 
 import java.io.IOException;
 import java.io.LineNumberReader;
